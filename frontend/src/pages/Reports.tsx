@@ -7,10 +7,7 @@ import {
   DollarSign, 
   Package, 
   CreditCard,
-  Download,
-  Calendar,
-  ArrowUpRight,
-  ArrowDownRight
+  Download
 } from 'lucide-react';
 import type { ApexOptions } from 'apexcharts';
 

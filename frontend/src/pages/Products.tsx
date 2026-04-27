@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useProducts, useCreateProduct, useUpdateProduct, useDeleteProduct } from '../hooks/useProducts';
 import { useCategories } from '../hooks/useCategories';
-import type { Product, CreateProductPayload } from '../types';
+import type { Product, CreateProductPayload, Category } from '../types';
 import LoadingOverlay from '../components/LoadingOverlay';
 
 const emptyForm: CreateProductPayload = {
@@ -79,8 +79,8 @@ export default function Products() {
     setShowForm(false);
   };
 
-  const filtered = products?.filter(
-    (p) =>
+  const filtered = (products as Product[])?.filter(
+    (p: Product) =>
       p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.sku.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -173,7 +173,7 @@ export default function Products() {
                 <select name="categoryId" value={form.categoryId} onChange={handleChange}
                   className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
                   <option value="">No Category</option>
-                  {categories?.map((cat) => (
+                  {categories?.map((cat: Category) => (
                     <option key={cat.id} value={cat.id}>{cat.name}</option>
                   ))}
                 </select>

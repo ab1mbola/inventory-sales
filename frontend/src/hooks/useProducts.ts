@@ -5,7 +5,7 @@ import type { CreateProductPayload, Product } from '../types';
 export function useProducts() {
   return useQuery<Product[]>({
     queryKey: ['products'],
-    queryFn: productService.getAll,
+    queryFn: () => productService.getAll(),
   });
 }
 

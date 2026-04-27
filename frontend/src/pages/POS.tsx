@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useProducts } from '../hooks/useProducts';
 import { useCategories } from '../hooks/useCategories';
 import { useCustomers } from '../hooks/useCustomers';
@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import LoadingOverlay from '../components/LoadingOverlay';
 import ReceiptModal from '../components/ReceiptModal';
-import type { Sale, Customer } from '../types';
+import type { Sale, Customer, Product, Category } from '../types';
 
 export default function POS() {
   const { data: products, isLoading: productsLoading } = useProducts();
@@ -55,14 +55,14 @@ export default function POS() {
     return isNaN(received) ? 0 : Math.max(0, received - cartTotal);
   }, [amountReceived, cartTotal, paymentMethod]);
 
-  const filteredProducts = products?.filter((p) => {
+  const filteredProducts = (products as Product[])?.filter((p) => {
     const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          p.sku.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || p.categoryId === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const filteredCustomers = customers?.filter(c => 
+  const filteredCustomers = (customers as Customer[])?.filter((c) => 
     c.name.toLowerCase().includes(customerSearch.toLowerCase()) ||
     c.phone?.includes(customerSearch)
   );
@@ -166,7 +166,7 @@ export default function POS() {
             >
               All Items
             </button>
-            {categories?.map((cat) => (
+            {categories?.map((cat: Category) => (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
@@ -184,7 +184,7 @@ export default function POS() {
 
         {/* Product Grid */}
         <div className="flex-1 overflow-y-auto p-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {filteredProducts?.map((product) => {
+          {filteredProducts?.map((product: Product) => {
             const inCart = items.find(i => i.product.id === product.id);
             const isOutOfStock = product.stockLevel <= 0;
             
