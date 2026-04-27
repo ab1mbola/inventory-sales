@@ -40,7 +40,7 @@ export const getDebtors = async (req: Request, res: Response) => {
 
 export const getCustomerDebtDetails = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const customer = await prisma.customer.findUnique({
       where: { id },
       include: {

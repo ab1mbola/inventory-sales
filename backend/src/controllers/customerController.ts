@@ -44,7 +44,7 @@ export const createCustomer = async (req: Request, res: Response) => {
 
 export const updateCustomer = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { name, email, phone, address, creditLimit } = req.body;
 
     const customer = await prisma.customer.update({
@@ -65,7 +65,7 @@ export const updateCustomer = async (req: Request, res: Response) => {
 
 export const deleteCustomer = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     await prisma.customer.delete({ where: { id } });
     res.json({ message: 'Customer deleted successfully' });
   } catch (error) {
