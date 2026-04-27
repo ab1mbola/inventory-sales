@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(STAFF)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  sales     Sale[]
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model Product {
+  id          String     @id @default(uuid())
+  sku         String     @unique
+  name        String
+  description String?
+  price       Decimal    @db.Decimal(10, 2)
+  cost        Decimal    @db.Decimal(10, 2)
+  stockLevel  Int        @default(0)
+  minStock    Int        @default(10)
+  categoryId  String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  category    Category?  @relation(fields: [categoryId], references: [id])
+  saleItems   SaleItem[]
+
+  @@index([sku])
+  @@index([categoryId])
+}
+
+model Customer {
+  id          String   @id @default(uuid())
+  name        String
+  email       String?
+  phone       String?  @unique
+  address     String?
+  creditLimit Decimal? @db.Decimal(10, 2)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  sales       Sale[]
+  payments    CustomerPayment[]
+
+  @@index([phone])
+}
+
+model CustomerPayment {
+  id          String      @id @default(uuid())
+  customerId  String
+  amount      Decimal     @db.Decimal(10, 2)
+  method      PaymentType @default(CASH)
+  note        String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  customer    Customer    @relation(fields: [customerId], references: [id])
+
+  @@index([customerId])
+}
+
+model Sale {
+  id             String      @id @default(uuid())
+  totalAmount    Decimal     @db.Decimal(10, 2)
+  totalCost      Decimal     @db.Decimal(10, 2)
+  paymentMethod  PaymentType
+  status         SaleStatus  @default(COMPLETED)
+  userId         String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  amountReceived Decimal?    @db.Decimal(10, 2)
+  changeAmount   Decimal?    @db.Decimal(10, 2)
+  customerName   String?
+  customerPhone  String?
+  customerId     String?
+  customer       Customer?   @relation(fields: [customerId], references: [id])
+  user           User?       @relation(fields: [userId], references: [id])
+  items          SaleItem[]
+
+  @@index([createdAt])
+  @@index([customerId])
+}
+
+model SaleItem {
+  id        String  @id @default(uuid())
+  saleId    String
+  productId String
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2)
+  cost      Decimal @db.Decimal(10, 2)
+  product   Product @relation(fields: [productId], references: [id])
+  sale      Sale    @relation(fields: [saleId], references: [id])
+
+  @@index([saleId])
+  @@index([productId])
+}
+
+model Expense {
+  id          String   @id @default(uuid())
+  description String
+  amount      Decimal  @db.Decimal(10, 2)
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([date])
+}
+
+enum Role {
+  OWNER
+  MANAGER
+  STAFF
+}
+
+enum PaymentType {
+  CASH
+  CARD
+  TRANSFER
+  CREDIT
+}
+
+enum SaleStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+}
