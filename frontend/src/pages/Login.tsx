@@ -40,8 +40,8 @@ export default function Login() {
           <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-600 rounded-3xl shadow-2xl shadow-blue-500/20 mb-6 animate-bounce-subtle">
             <Package size={40} className="text-white" strokeWidth={1.5} />
           </div>
-          <h1 className="text-4xl font-black text-slate-900 tracking-tight">Inventory OS</h1>
-          <p className="text-slate-500 font-medium mt-2 text-lg">Sign in to your dashboard</p>
+          <h1 className="text-4xl font-bold text-slate-900 tracking-tight">Welcome Back</h1>
+          <p className="text-slate-500 font-medium mt-2 text-lg">Sign in to manage your inventory</p>
         </div>
 
         {/* Login Card */}
@@ -102,8 +102,8 @@ export default function Login() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mt-10">
-          Inventory OS v1.0 • Secure Cloud Access
+        <p className="text-center text-slate-400 text-sm mt-10">
+          Inventory Management System v1.0
         </p>
       </div>
     </div>
