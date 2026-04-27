@@ -79,12 +79,12 @@ export default function Customers() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-100">Customers</h1>
-          <p className="text-sm text-gray-400 mt-1">Manage your customer database and credit limits.</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Customers</h1>
+          <p className="text-sm text-slate-500 mt-1">Manage your customer database and credit limits.</p>
         </div>
         <button 
           onClick={() => { resetForm(); setIsModalOpen(true); }}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-blue-900/20 active:scale-95"
+          className="flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-blue-500/20 active:scale-95"
         >
           <UserPlus size={18} />
           Add Customer
@@ -92,20 +92,20 @@ export default function Customers() {
       </div>
 
       {/* Search & Stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
           <input
             type="text"
             placeholder="Search by name, phone or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-800 rounded-2xl text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+            className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm"
           />
         </div>
-        <div className="bg-gray-900/50 border border-gray-800 rounded-2xl px-4 py-3 flex items-center justify-between">
-          <span className="text-sm text-gray-400">Total Customers</span>
-          <span className="text-xl font-bold text-gray-100">{customers?.length || 0}</span>
+        <div className="bg-white border border-slate-200 rounded-2xl px-6 py-3 flex items-center justify-between shadow-sm">
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Total</span>
+          <span className="text-xl font-black text-slate-900">{customers?.length || 0}</span>
         </div>
       </div>
 
@@ -117,51 +117,51 @@ export default function Customers() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCustomers?.map((customer) => (
-            <div key={customer.id} className="bg-gray-900/50 border border-gray-800 rounded-3xl p-6 hover:border-gray-700 transition-all group relative overflow-hidden">
-              <div className="flex justify-between items-start mb-4">
-                <div className="w-12 h-12 bg-gray-800 rounded-2xl flex items-center justify-center text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                  <Users size={24} />
+            <div key={customer.id} className="bg-white border border-slate-200 rounded-[2rem] p-6 hover:border-blue-200 transition-all group relative overflow-hidden shadow-sm hover:shadow-xl hover:shadow-blue-500/5">
+              <div className="flex justify-between items-start mb-6">
+                <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-inner">
+                  <Users size={28} strokeWidth={1.5} />
                 </div>
-                <div className="flex items-center gap-1">
-                  <button onClick={() => handleEdit(customer)} className="p-2 text-gray-500 hover:text-blue-400 hover:bg-blue-400/10 rounded-lg transition-all">
-                    <Edit2 size={16} />
+                <div className="flex items-center gap-2">
+                  <button onClick={() => handleEdit(customer)} className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all cursor-pointer">
+                    <Edit2 size={18} />
                   </button>
-                  <button onClick={() => handleDelete(customer.id)} className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all">
-                    <Trash2 size={16} />
+                  <button onClick={() => handleDelete(customer.id)} className="p-2.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all cursor-pointer">
+                    <Trash2 size={18} />
                   </button>
                 </div>
               </div>
               
-              <h3 className="text-lg font-bold text-gray-100 mb-1">{customer.name}</h3>
-              <div className="space-y-2 mt-4">
+              <h3 className="text-xl font-black text-slate-900 mb-2">{customer.name}</h3>
+              <div className="space-y-2.5 mt-4">
                 {customer.phone && (
-                  <div className="flex items-center gap-2 text-sm text-gray-400">
-                    <Phone size={14} className="text-gray-500" />
+                  <div className="flex items-center gap-3 text-sm text-slate-500 font-medium">
+                    <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400"><Phone size={14} /></div>
                     <span>{customer.phone}</span>
                   </div>
                 )}
                 {customer.email && (
-                  <div className="flex items-center gap-2 text-sm text-gray-400">
-                    <Mail size={14} className="text-gray-500" />
+                  <div className="flex items-center gap-3 text-sm text-slate-500 font-medium">
+                    <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400"><Mail size={14} /></div>
                     <span className="truncate">{customer.email}</span>
                   </div>
                 )}
                 {customer.address && (
-                  <div className="flex items-center gap-2 text-sm text-gray-400">
-                    <MapPin size={14} className="text-gray-500" />
+                  <div className="flex items-center gap-3 text-sm text-slate-500 font-medium">
+                    <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400"><MapPin size={14} /></div>
                     <span className="truncate">{customer.address}</span>
                   </div>
                 )}
               </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-800 flex items-center justify-between">
+              <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Credit Limit</p>
-                  <p className="text-sm font-bold text-emerald-400">₦{customer.creditLimit?.toLocaleString() || '0'}</p>
+                  <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Credit Limit</p>
+                  <p className="text-base font-black text-emerald-600">₦{customer.creditLimit?.toLocaleString() || '0'}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Sales</p>
-                  <p className="text-sm font-bold text-gray-200">{customer._count?.sales || 0}</p>
+                  <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Total Sales</p>
+                  <p className="text-base font-black text-slate-900">{customer._count?.sales || 0}</p>
                 </div>
               </div>
             </div>
@@ -171,79 +171,79 @@ export default function Customers() {
 
       {/* Add/Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-gray-900 border border-gray-800 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="p-6 border-b border-gray-800 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-100">{editingCustomer ? 'Edit Customer' : 'Add New Customer'}</h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-white"><X size={24} /></button>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white border border-slate-200 w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-8 border-b border-slate-50 flex items-center justify-between">
+              <h2 className="text-2xl font-black text-slate-900">{editingCustomer ? 'Edit Customer' : 'Add Customer'}</h2>
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-900 p-2 hover:bg-slate-50 rounded-full transition-colors cursor-pointer"><X size={24} /></button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1 sm:col-span-2">
-                  <label className="text-xs font-bold text-gray-500 uppercase ml-1">Customer Name *</label>
+            <form onSubmit={handleSubmit} className="p-8 space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="space-y-2 sm:col-span-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name *</label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Full Name"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
+                    placeholder="Enter customer full name"
                   />
                 </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-gray-500 uppercase ml-1">Phone Number</label>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
                   <input
                     type="text"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
                     placeholder="080..."
                   />
                 </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-gray-500 uppercase ml-1">Email Address</label>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
                     placeholder="example@mail.com"
                   />
                 </div>
-                <div className="space-y-1 sm:col-span-2">
-                  <label className="text-xs font-bold text-gray-500 uppercase ml-1">Credit Limit (₦)</label>
+                <div className="space-y-2 sm:col-span-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Credit Limit (₦)</label>
                   <input
                     type="number"
                     value={formData.creditLimit}
                     onChange={(e) => setFormData({ ...formData, creditLimit: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="50000"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-bold"
+                    placeholder="0.00"
                   />
                 </div>
-                <div className="space-y-1 sm:col-span-2">
-                  <label className="text-xs font-bold text-gray-500 uppercase ml-1">Address</label>
+                <div className="space-y-2 sm:col-span-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Physical Address</label>
                   <textarea
                     rows={2}
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="Street Address"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
+                    placeholder="Street, City, State"
                   />
                 </div>
               </div>
 
-              <div className="pt-4 flex gap-3">
+              <div className="pt-4 flex gap-4">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 px-4 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold rounded-xl transition-all"
+                  className="flex-1 px-6 py-4 bg-slate-50 hover:bg-slate-100 text-slate-500 font-black uppercase tracking-widest rounded-2xl transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-900/20"
+                  className="flex-1 px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-blue-500/20 cursor-pointer"
                 >
                   {editingCustomer ? 'Update' : 'Create'}
                 </button>

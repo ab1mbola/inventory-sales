@@ -12,22 +12,22 @@ export default function ReceiptModal({ sale, onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[110] p-4 overflow-y-auto">
-      <div className="bg-white text-gray-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[110] p-4 overflow-y-auto">
+      <div className="bg-white text-slate-900 w-full max-w-md rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col max-h-[90vh] border border-slate-200">
         {/* Header (Hidden on print) */}
-        <div className="p-4 bg-gray-100 flex items-center justify-between border-b border-gray-200 print:hidden">
-          <h3 className="font-bold">Sale Receipt</h3>
-          <div className="flex items-center gap-2">
+        <div className="p-6 bg-slate-50 flex items-center justify-between border-b border-slate-100 print:hidden">
+          <h3 className="font-black text-slate-900 uppercase tracking-widest text-xs">Receipt Preview</h3>
+          <div className="flex items-center gap-3">
             <button 
               onClick={handlePrint}
-              className="p-2 hover:bg-gray-200 rounded-lg text-gray-600 transition-colors cursor-pointer"
+              className="p-2.5 hover:bg-white hover:shadow-sm rounded-xl text-slate-500 transition-all cursor-pointer border border-transparent hover:border-slate-200"
               title="Print Receipt"
             >
               <Printer size={18} />
             </button>
             <button 
               onClick={onClose}
-              className="p-2 hover:bg-gray-200 rounded-lg text-gray-600 transition-colors cursor-pointer"
+              className="p-2.5 hover:bg-white hover:shadow-sm rounded-xl text-slate-500 transition-all cursor-pointer border border-transparent hover:border-slate-200"
             >
               <X size={18} />
             </button>
@@ -36,91 +36,93 @@ export default function ReceiptModal({ sale, onClose }: Props) {
 
         {/* Receipt Content */}
         <div className="p-8 flex-1 overflow-y-auto print:p-0 print:overflow-visible" id="receipt-content">
-          <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold uppercase tracking-widest">📦 INVENTORY</h1>
-            <p className="text-sm text-gray-500">Sales Management System</p>
-            <p className="text-xs text-gray-400 mt-1">Receipt ID: {sale.id.slice(0, 8).toUpperCase()}</p>
-            <p className="text-xs text-gray-400">{new Date(sale.createdAt).toLocaleString()}</p>
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-black uppercase tracking-[0.2em] text-slate-900">INVENTORY</h1>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Sales Management System</p>
+            <div className="mt-6 flex flex-col items-center gap-1">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-full">REF: {sale.id.slice(0, 8).toUpperCase()}</p>
+              <p className="text-[10px] font-bold text-slate-400 mt-1">{new Date(sale.createdAt).toLocaleString()}</p>
+            </div>
           </div>
 
-          <div className="border-t border-b border-dashed border-gray-300 py-4 mb-6">
+          <div className="border-t border-b border-dashed border-slate-200 py-6 mb-8">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-gray-500 border-b border-gray-100">
-                  <th className="pb-2 font-medium">Item</th>
-                  <th className="pb-2 font-medium text-center">Qty</th>
-                  <th className="pb-2 font-medium text-right">Price</th>
-                  <th className="pb-2 font-medium text-right">Total</th>
+                <tr className="text-left text-slate-400 border-b border-slate-50">
+                  <th className="pb-3 font-black uppercase tracking-widest text-[10px]">Item</th>
+                  <th className="pb-3 font-black uppercase tracking-widest text-[10px] text-center">Qty</th>
+                  <th className="pb-3 font-black uppercase tracking-widest text-[10px] text-right">Price</th>
+                  <th className="pb-3 font-black uppercase tracking-widest text-[10px] text-right">Total</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-slate-50">
                 {sale.items.map((item) => (
                   <tr key={item.id}>
-                    <td className="py-3 pr-2">
-                      <div className="font-medium text-gray-800">{item.product?.name || 'Unknown Product'}</div>
-                      <div className="text-[10px] text-gray-400 uppercase">{item.product?.sku}</div>
+                    <td className="py-4 pr-2">
+                      <div className="font-black text-slate-900 text-xs">{item.product?.name || 'Unknown Product'}</div>
+                      <div className="text-[9px] text-slate-400 font-black uppercase tracking-[0.1em] mt-0.5">{item.product?.sku}</div>
                     </td>
-                    <td className="py-3 text-center text-gray-600">{item.quantity}</td>
-                    <td className="py-3 text-right text-gray-600">₦{Number(item.price).toLocaleString()}</td>
-                    <td className="py-3 text-right font-medium text-gray-800">₦{(item.price * item.quantity).toLocaleString()}</td>
+                    <td className="py-4 text-center text-slate-600 font-bold text-xs">{item.quantity}</td>
+                    <td className="py-4 text-right text-slate-600 font-bold text-xs">₦{Number(item.price).toLocaleString()}</td>
+                    <td className="py-4 text-right font-black text-slate-900 text-xs">₦{(item.price * item.quantity).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
 
-          <div className="space-y-2 mb-6">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Subtotal</span>
-              <span className="text-gray-800 font-medium">₦{Number(sale.totalAmount).toLocaleString()}</span>
+          <div className="space-y-3 mb-8">
+            <div className="flex justify-between text-xs font-bold">
+              <span className="text-slate-400 uppercase tracking-widest">Subtotal</span>
+              <span className="text-slate-900">₦{Number(sale.totalAmount).toLocaleString()}</span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Tax (0%)</span>
-              <span className="text-gray-800 font-medium">₦0</span>
+            <div className="flex justify-between text-xs font-bold">
+              <span className="text-slate-400 uppercase tracking-widest">Tax (0%)</span>
+              <span className="text-slate-900">₦0</span>
             </div>
-            <div className="flex justify-between text-lg font-bold border-t border-gray-100 pt-2 mt-2">
-              <span className="text-gray-900">Total</span>
+            <div className="flex justify-between text-xl font-black border-t-2 border-slate-900 pt-4 mt-4">
+              <span className="text-slate-900 uppercase tracking-widest">Total</span>
               <span className="text-blue-600">₦{Number(sale.totalAmount).toLocaleString()}</span>
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-4 space-y-2 mb-6">
-            <div className="flex justify-between text-xs">
-              <span className="text-gray-500">Payment Method:</span>
-              <span className="font-bold text-gray-700 uppercase">{sale.paymentMethod}</span>
+          <div className="bg-slate-50 rounded-2xl p-6 space-y-3 mb-8">
+            <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+              <span className="text-slate-400">Payment:</span>
+              <span className="text-slate-900">{sale.paymentMethod}</span>
             </div>
             {sale.paymentMethod === 'CASH' && sale.amountReceived && (
               <>
-                <div className="flex justify-between text-xs">
-                  <span className="text-gray-500">Amount Paid:</span>
-                  <span className="font-bold text-gray-700">₦{Number(sale.amountReceived).toLocaleString()}</span>
+                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                  <span className="text-slate-400">Received:</span>
+                  <span className="text-slate-900">₦{Number(sale.amountReceived).toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-gray-500">Change:</span>
-                  <span className="font-bold text-green-600">₦{Number(sale.changeAmount).toLocaleString()}</span>
+                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                  <span className="text-slate-400">Change:</span>
+                  <span className="text-emerald-600">₦{Number(sale.changeAmount).toLocaleString()}</span>
                 </div>
               </>
             )}
             {(sale.paymentMethod === 'CREDIT' || sale.customerName) && (
-              <div className="border-t border-gray-200 pt-2 mt-2">
-                <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">Customer Details</p>
-                <p className="text-sm font-medium text-gray-800">{sale.customerName || 'N/A'}</p>
-                {sale.customerPhone && <p className="text-xs text-gray-500">{sale.customerPhone}</p>}
+              <div className="border-t border-slate-200 pt-4 mt-4">
+                <p className="text-[9px] uppercase font-black text-slate-400 tracking-[0.2em] mb-2">Customer Info</p>
+                <p className="text-sm font-black text-slate-900">{sale.customerName || 'N/A'}</p>
+                {sale.customerPhone && <p className="text-xs font-bold text-slate-500 mt-1">{sale.customerPhone}</p>}
               </div>
             )}
           </div>
 
           <div className="text-center">
-            <p className="text-xs text-gray-400 italic">Thank you for your business!</p>
-            <p className="text-[10px] text-gray-300 mt-4">This is a system generated receipt.</p>
+            <p className="text-xs font-bold text-slate-400 italic">Thank you for your business!</p>
+            <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mt-6">Generated by Inventory OS</p>
           </div>
         </div>
 
         {/* Footer (Hidden on print) */}
-        <div className="p-6 bg-gray-50 border-t border-gray-200 print:hidden">
+        <div className="p-8 bg-slate-50 border-t border-slate-100 print:hidden">
           <button 
             onClick={onClose}
-            className="w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-all cursor-pointer"
+            className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 active:scale-95 cursor-pointer"
           >
             Close & Continue
           </button>

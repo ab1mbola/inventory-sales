@@ -16,8 +16,8 @@ function ProtectedLayout() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -27,7 +27,7 @@ function ProtectedLayout() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-950">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-slate-50">
       <Sidebar />
       <main className="flex-1 overflow-auto pt-16 lg:pt-0">
         <Routes>

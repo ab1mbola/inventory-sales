@@ -57,14 +57,14 @@ export default function Categories() {
     }
   };
 
-  if (isLoading) return <div className="p-8 text-center text-gray-400">Loading categories...</div>;
+  if (isLoading) return <div className="p-8 text-center text-slate-400">Loading categories...</div>;
 
   const isMutating = createCategory.isPending || updateCategory.isPending || deleteCategory.isPending;
 
   return (
-    <div className="p-4 lg:p-6 max-w-3xl mx-auto">
+    <div className="p-4 lg:p-6 max-w-7xl mx-auto">
       {isMutating && <LoadingOverlay message={deleteCategory.isPending ? 'Deleting...' : editingId ? 'Updating...' : 'Creating...'} />}
-      <h1 className="text-2xl font-bold text-gray-100 mb-6">Categories</h1>
+      <h1 className="text-2xl font-bold text-slate-900 mb-6">Categories</h1>
 
       {/* Create Form */}
       <form onSubmit={handleCreate} className="flex flex-col sm:flex-row gap-3 mb-8">
@@ -75,14 +75,14 @@ export default function Categories() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
           />
           <input
             type="text"
             placeholder="Description (optional)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
           />
         </div>
         <button
@@ -95,26 +95,26 @@ export default function Categories() {
       </form>
 
       {/* List */}
-      <div className="rounded-xl border border-gray-700 overflow-x-auto">
+      <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <table className="w-full text-sm text-left">
-          <thead className="bg-gray-800 text-gray-400 uppercase text-xs">
+          <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
             <tr>
-              <th className="px-4 py-3">Name</th>
-              <th className="px-4 py-3">Description</th>
-              <th className="px-4 py-3 text-center w-28">Actions</th>
+              <th className="px-4 py-4">Name</th>
+              <th className="px-4 py-4">Description</th>
+              <th className="px-4 py-4 text-center w-28">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-800">
+          <tbody className="divide-y divide-slate-100">
             {categories && categories.length > 0 ? (
               categories.map((cat) => (
-                <tr key={cat.id} className="bg-gray-900 hover:bg-gray-800/50 transition-colors">
+                <tr key={cat.id} className="bg-white hover:bg-slate-50 transition-colors">
                   {editingId === cat.id ? (
                     <>
                       <td className="px-4 py-2">
                         <input
                           value={editName}
                           onChange={(e) => setEditName(e.target.value)}
-                          className="w-full px-2 py-1 bg-gray-800 border border-gray-600 rounded text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                           autoFocus
                         />
                       </td>
@@ -122,7 +122,7 @@ export default function Categories() {
                         <input
                           value={editDescription}
                           onChange={(e) => setEditDescription(e.target.value)}
-                          className="w-full px-2 py-1 bg-gray-800 border border-gray-600 rounded text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </td>
                       <td className="px-4 py-2 text-center">
@@ -138,17 +138,19 @@ export default function Categories() {
                     </>
                   ) : (
                     <>
-                      <td className="px-4 py-3 text-gray-100 font-medium">{cat.name}</td>
-                      <td className="px-4 py-3 text-gray-400">{cat.description || '—'}</td>
-                      <td className="px-4 py-3 text-center">
-                        <button onClick={() => startEdit(cat)}
-                          className="text-blue-400 hover:text-blue-300 mr-3 cursor-pointer">
-                          <Pencil size={15} />
-                        </button>
-                        <button onClick={() => handleDelete(cat.id, cat.name)}
-                          className="text-red-400 hover:text-red-300 cursor-pointer">
-                          <Trash2 size={15} />
-                        </button>
+                      <td className="px-4 py-4 text-slate-900 font-semibold">{cat.name}</td>
+                      <td className="px-4 py-4 text-slate-500">{cat.description || '—'}</td>
+                      <td className="px-4 py-4 text-center">
+                        <div className="flex items-center justify-center gap-3">
+                          <button onClick={() => startEdit(cat)}
+                            className="text-blue-600 hover:text-blue-700 cursor-pointer">
+                            <Pencil size={15} />
+                          </button>
+                          <button onClick={() => handleDelete(cat.id, cat.name)}
+                            className="text-red-500 hover:text-red-600 cursor-pointer">
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
                       </td>
                     </>
                   )}
@@ -156,7 +158,7 @@ export default function Categories() {
               ))
             ) : (
               <tr>
-                <td colSpan={3} className="px-4 py-8 text-center text-gray-500">
+                <td colSpan={3} className="px-4 py-8 text-center text-slate-400">
                   No categories yet. Create one above.
                 </td>
               </tr>
@@ -165,7 +167,7 @@ export default function Categories() {
         </table>
       </div>
 
-      <div className="mt-4 text-sm text-gray-500">
+      <div className="mt-4 text-sm text-slate-400 font-medium">
         {categories?.length ?? 0} categor{(categories?.length ?? 0) !== 1 ? 'ies' : 'y'}
       </div>
     </div>
