@@ -21,7 +21,7 @@ export const getReportStats = async (req: Request, res: Response) => {
       monthlyDataMap.set(monthStr, { month: monthStr, revenue: 0, profit: 0 });
     }
 
-    sales.forEach(sale => {
+    sales.forEach((sale: any) => {
       const monthStr = format(sale.createdAt, 'MMM yyyy');
       if (monthlyDataMap.has(monthStr)) {
         const data = monthlyDataMap.get(monthStr);
@@ -42,7 +42,7 @@ export const getReportStats = async (req: Request, res: Response) => {
     });
 
     const categoryMap = new Map();
-    categorySalesRaw.forEach(item => {
+    categorySalesRaw.forEach((item: any) => {
       const catName = item.product?.category?.name || 'Uncategorized';
       const revenue = Number(item.price) * item.quantity;
       categoryMap.set(catName, (categoryMap.get(catName) || 0) + revenue);
@@ -57,7 +57,7 @@ export const getReportStats = async (req: Request, res: Response) => {
       _sum: { totalAmount: true }
     });
 
-    const paymentDistribution = paymentDistributionRaw.map(item => ({
+    const paymentDistribution = paymentDistributionRaw.map((item: any) => ({
       method: item.paymentMethod,
       count: item._count.id,
       amount: Number(item._sum.totalAmount || 0)
@@ -66,9 +66,9 @@ export const getReportStats = async (req: Request, res: Response) => {
     // 4. Inventory Value
     const products = await prisma.product.findMany();
     const inventoryStats = {
-      totalItems: products.reduce((acc, p) => acc + p.stockLevel, 0),
-      totalValue: products.reduce((acc, p) => acc + (Number(p.price) * p.stockLevel), 0),
-      totalCost: products.reduce((acc, p) => acc + (Number(p.cost) * p.stockLevel), 0),
+      totalItems: products.reduce((acc: number, p: any) => acc + p.stockLevel, 0),
+      totalValue: products.reduce((acc: number, p: any) => acc + (Number(p.price) * p.stockLevel), 0),
+      totalCost: products.reduce((acc: number, p: any) => acc + (Number(p.cost) * p.stockLevel), 0),
     };
 
     res.json({

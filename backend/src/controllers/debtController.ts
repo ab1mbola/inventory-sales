@@ -14,10 +14,10 @@ export const getDebtors = async (req: Request, res: Response) => {
       }
     });
 
-    const debtorStats = customers.map(customer => {
-      const totalCreditSales = customer.sales.reduce((sum, sale) => sum + Number(sale.totalAmount), 0);
-      const totalAmountPaidOnCreditSales = customer.sales.reduce((sum, sale) => sum + Number(sale.amountReceived || 0), 0);
-      const totalRepayments = customer.payments.reduce((sum, payment) => sum + Number(payment.amount), 0);
+    const debtorStats = customers.map((customer: any) => {
+      const totalCreditSales = customer.sales.reduce((sum: number, sale: any) => sum + Number(sale.totalAmount), 0);
+      const totalAmountPaidOnCreditSales = customer.sales.reduce((sum: number, sale: any) => sum + Number(sale.amountReceived || 0), 0);
+      const totalRepayments = customer.payments.reduce((sum: number, payment: any) => sum + Number(payment.amount), 0);
 
       const totalOwed = totalCreditSales - totalAmountPaidOnCreditSales - totalRepayments;
 
@@ -29,7 +29,7 @@ export const getDebtors = async (req: Request, res: Response) => {
         lastPaymentDate: customer.payments.length > 0 ? customer.payments[customer.payments.length - 1].createdAt : null,
         creditLimit: Number(customer.creditLimit || 0)
       };
-    }).filter(d => d.totalOwed > 0);
+    }).filter((d: any) => d.totalOwed > 0);
 
     res.json(debtorStats);
   } catch (error) {

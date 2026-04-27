@@ -32,8 +32,8 @@ export const getDashboardStats = async (req: Request, res: Response) => {
       })
     ]);
 
-    const todayRevenue = todaySales.reduce((acc, sale) => acc + Number(sale.totalAmount), 0);
-    const todayProfit = todaySales.reduce((acc, sale) => acc + (Number(sale.totalAmount) - Number(sale.totalCost)), 0);
+    const todayRevenue = todaySales.reduce((acc: number, sale: any) => acc + Number(sale.totalAmount), 0);
+    const todayProfit = todaySales.reduce((acc: number, sale: any) => acc + (Number(sale.totalAmount) - Number(sale.totalCost)), 0);
 
     // 2. Sales Trend (Last 7 Days)
     const salesTrendRaw = await prisma.sale.groupBy({
@@ -51,7 +51,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
       trendMap.set(dateStr, 0);
     }
 
-    salesTrendRaw.forEach(item => {
+    salesTrendRaw.forEach((item: any) => {
       const dateStr = item.createdAt.toISOString().split('T')[0];
       if (trendMap.has(dateStr)) {
         trendMap.set(dateStr, trendMap.get(dateStr) + Number(item._sum.totalAmount || 0));
@@ -76,7 +76,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
     });
 
     const topProducts = await Promise.all(
-      topItemsRaw.map(async (item) => {
+      topItemsRaw.map(async (item: any) => {
         const product = await prisma.product.findUnique({ where: { id: item.productId } });
         return {
           name: product?.name || 'Unknown',

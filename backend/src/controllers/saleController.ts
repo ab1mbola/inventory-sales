@@ -38,7 +38,7 @@ export const createSale = async (req: Request, res: Response) => {
     const totalAmount = items.reduce((sum: number, item: any) => sum + (Number(item.price) * Number(item.quantity)), 0);
     const totalCost = items.reduce((sum: number, item: any) => sum + (Number(item.cost) * Number(item.quantity)), 0);
 
-    const sale = await prisma.$transaction(async (tx) => {
+    const sale = await prisma.$transaction(async (tx: any) => {
       const newSale = await tx.sale.create({
         data: {
           totalAmount,
