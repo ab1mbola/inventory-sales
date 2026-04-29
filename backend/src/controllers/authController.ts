@@ -71,9 +71,9 @@ export const login = async (req: Request, res: Response) => {
         role: user.role,
       },
     });
-  } catch (error) {
-    console.error('Login Error:', error);
-    res.status(500).json({ error: 'Failed to login' });
+  } catch (error: any) {
+    console.error('CRITICAL LOGIN ERROR:', error);
+    res.status(500).json({ error: 'Failed to login', details: error.message });
   }
 };
 
