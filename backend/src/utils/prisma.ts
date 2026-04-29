@@ -12,11 +12,22 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false
   },
-  max: 10, // Limit connections to prevent pool exhaustion on Supabase
+  max: 10,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000, // Increase connection timeout
+  connectionTimeoutMillis: 10000,
 });
+
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle client', err);
+});
+
+pool.connect()
+  .then(() => console.log('Successfully connected to the database pool'))
+  .catch(err => console.error('Error connecting to the database pool', err));
 
 const adapter = new PrismaPg(pool);
 
-export const prisma = new PrismaClient({ adapter });
+export const prisma = new PrismaClient({ 
+  adapter,
+  log: ['query', 'info', 'warn', 'error'],
+});
