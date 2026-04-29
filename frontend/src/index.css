@@ -1,18 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,800&family=Inter:wght@300;400;500;600&display=swap');
 @import "tailwindcss";
 
+
 @theme {
+  --font-serif: "Fraunces", serif;
   --font-sans: "Inter", system-ui, sans-serif;
-  --color-primary: #3b82f6;
-  --color-primary-dark: #2563eb;
-  --color-background: #f8fafc;
-  --color-surface: #ffffff;
+  
+  --color-primary: #000000;
+  --color-accent: #E91E63;
+  --color-background: #FFFFFF;
+  --color-surface: #F9F9F9;
+  --color-muted: #666666;
+  --color-border: #E5E7EB;
 }
 
-body {
-  margin: 0;
-  font-family: var(--font-sans);
-  background-color: var(--color-background);
-  color: #1e293b;
+@layer base {
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    background-color: var(--color-background);
+    color: var(--color-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer components {
+  .craft-card {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 0; /* Sharp corners like the aesthetic */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .craft-card:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 10px 30px -10px rgba(233, 30, 99, 0.1);
+  }
+
+  .craft-btn {
+    background: var(--color-primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    border: 1px solid var(--color-primary);
+  }
+
+  .craft-btn:hover {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
 }
 
 /* Base utility for hiding scrollbar */
