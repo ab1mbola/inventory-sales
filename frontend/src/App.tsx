@@ -9,25 +9,25 @@ import Sales from './pages/Sales';
 import Reports from './pages/Reports';
 import Customers from './pages/Customers';
 import Debt from './pages/Debt';
+import Settings from './pages/Settings';
 import Login from './pages/Login';
+
+import FullPageLoader from './components/FullPageLoader';
 
 function ProtectedLayout() {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <FullPageLoader message="Authenticating Terminal..." />;
   }
+
 
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-slate-50">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-white">
       <Sidebar />
       <main className="flex-1 overflow-auto pt-16 lg:pt-0">
         <Routes>
@@ -39,6 +39,7 @@ function ProtectedLayout() {
           <Route path="/reports" element={<Reports />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/debt" element={<Debt />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
