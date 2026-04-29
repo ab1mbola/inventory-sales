@@ -1,11 +1,7 @@
 import { useReports } from '../hooks/useReports';
 import Chart from 'react-apexcharts';
 import { 
-  BarChart, 
-  PieChart, 
   TrendingUp, 
-  DollarSign, 
-  Package, 
   CreditCard,
   Download
 } from 'lucide-react';

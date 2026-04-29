@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
 import type { Sale } from '../types';
 import { format } from 'date-fns';
-import { Search, Filter, Printer, Eye } from 'lucide-react';
+import { Search, Printer, Eye } from 'lucide-react';
 import { useState } from 'react';
 import ReceiptModal from '../components/ReceiptModal';
 import FullPageLoader from '../components/FullPageLoader';

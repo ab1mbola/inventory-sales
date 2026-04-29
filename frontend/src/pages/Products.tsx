@@ -3,7 +3,7 @@ import { useProducts, useCreateProduct, useUpdateProduct, useDeleteProduct } fro
 import { useCategories } from '../hooks/useCategories';
 import type { Product, CreateProductPayload, Category } from '../types';
 import LoadingOverlay from '../components/LoadingOverlay';
-import { Package, Search, Plus, X, Trash2, Edit3 } from 'lucide-react';
+import { Search, Plus, X, Trash2, Edit3 } from 'lucide-react';
 import FullPageLoader from '../components/FullPageLoader';
 
 

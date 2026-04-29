@@ -14,7 +14,6 @@ import {
   Banknote, 
   RefreshCcw, 
   User, 
-  Wallet,
   UserPlus,
   Check,
   ChevronDown,

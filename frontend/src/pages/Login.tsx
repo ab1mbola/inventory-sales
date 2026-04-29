@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { api } from '../services/api';
-import { Lock, Mail, Package, ArrowRight, Loader2 } from 'lucide-react';
+import { Package, ArrowRight, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {

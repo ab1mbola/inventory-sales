@@ -22,7 +22,6 @@ export function useUpdateCompany() {
 }
 
 export function useUpdateProfile() {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: { name: string; email: string }) => settingsService.updateProfile(data),
     onSuccess: () => {

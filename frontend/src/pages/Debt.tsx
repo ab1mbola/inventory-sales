@@ -7,7 +7,6 @@ import {
   ArrowDownLeft, 
   ArrowUpRight, 
   User, 
-  Phone, 
   Calendar,
   DollarSign,
   AlertCircle,
