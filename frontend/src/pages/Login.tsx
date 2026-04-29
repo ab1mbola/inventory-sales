@@ -22,89 +22,94 @@ export default function Login() {
       login(res.data.token, res.data.user);
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to login. Please check your credentials.');
+      setError(err.response?.data?.error || 'Authentication Failed.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      {/* Background Glow */}
-      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-blue-100 rounded-full blur-[120px] opacity-60" />
-      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-indigo-100 rounded-full blur-[120px] opacity-60" />
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8 relative overflow-hidden font-sans">
+      {/* Editorial Background Element */}
+      <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none select-none">
+        <h1 className="font-serif text-[20vw] font-bold leading-none tracking-tighter uppercase">Inventory</h1>
+      </div>
 
-      <div className="w-full max-w-md relative z-10">
+      <div className="w-full max-w-sm relative z-10">
         {/* Logo Section */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-600 rounded-3xl shadow-2xl shadow-blue-500/20 mb-6 animate-bounce-subtle">
-            <Package size={40} className="text-white" strokeWidth={1.5} />
+        <div className="text-left mb-16 border-b border-black pb-8">
+          <div className="flex items-center gap-4 mb-8 group cursor-default">
+            <div className="w-12 h-12 border-2 border-black flex items-center justify-center group-hover:bg-accent group-hover:border-accent transition-all duration-500">
+               <Package size={24} className="text-black group-hover:text-white transition-colors" />
+            </div>
+            <h2 className="font-serif text-3xl font-bold tracking-tighter uppercase">Inventory</h2>
           </div>
-          <h1 className="text-4xl font-bold text-slate-900 tracking-tight">Welcome Back</h1>
-          <p className="text-slate-500 font-medium mt-2 text-lg">Sign in to manage your inventory</p>
+          <h1 className="text-5xl font-serif font-bold tracking-tighter uppercase leading-none italic text-accent">Sign In</h1>
+          <p className="text-[10px] text-muted mt-4 uppercase tracking-[0.4em] font-bold">Access Terminal v1.0</p>
         </div>
 
-        {/* Login Card */}
-        <div className="bg-white border border-slate-200 p-10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="bg-rose-50 border border-rose-100 text-rose-600 p-4 rounded-2xl text-sm font-bold flex items-center gap-3 animate-shake">
-                <Lock size={18} />
-                {error}
-              </div>
-            )}
+        {/* Login Form */}
+        <form onSubmit={handleSubmit} className="space-y-10">
+          {error && (
+            <div className="border border-red-500 text-red-500 p-4 text-[10px] font-bold uppercase tracking-widest animate-in fade-in slide-in-from-top-2 duration-300">
+              Error: {error}
+            </div>
+          )}
 
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <div className="space-y-4">
+            <div className="group">
+              <label className="text-[9px] font-bold text-muted uppercase tracking-[0.3em] ml-1 group-focus-within:text-accent transition-colors">Credential Email</label>
+              <div className="relative mt-2">
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@inventory.com"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium"
+                  placeholder="IDENTITY@SYSTEM.IO"
+                  className="w-full px-4 py-5 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider uppercase font-bold placeholder:text-muted/30"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <div className="group">
+              <label className="text-[9px] font-bold text-muted uppercase tracking-[0.3em] ml-1 group-focus-within:text-accent transition-colors">Access Passphrase</label>
+              <div className="relative mt-2">
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium"
+                  className="w-full px-4 py-5 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider font-bold"
                 />
               </div>
             </div>
+          </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black uppercase tracking-widest transition-all shadow-xl shadow-blue-500/20 flex items-center justify-center gap-3 group active:scale-95 disabled:bg-slate-100 disabled:text-slate-300 disabled:shadow-none cursor-pointer"
-            >
-              {isLoading ? (
-                <Loader2 size={24} className="animate-spin" />
-              ) : (
-                <>
-                  <span>Sign In</span>
-                  <ArrowRight size={20} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
-                </>
-              )}
-            </button>
-          </form>
-        </div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-6 bg-black hover:bg-accent text-white font-bold uppercase tracking-[0.5em] text-[10px] transition-all duration-500 flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-20 cursor-pointer"
+          >
+            {isLoading ? (
+              <Loader2 size={20} className="animate-spin" />
+            ) : (
+              <>
+                <span>Authenticate</span>
+                <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform duration-500" />
+              </>
+            )}
+          </button>
+        </form>
 
         {/* Footer */}
-        <p className="text-center text-slate-400 text-sm mt-10">
-          Inventory Management System v1.0
-        </p>
+        <div className="mt-20 flex justify-between items-center opacity-40">
+           <div className="h-px bg-black flex-1 mr-4" />
+           <p className="text-[9px] font-bold uppercase tracking-widest whitespace-nowrap">
+             Inventory System — 2026
+           </p>
+           <div className="h-px bg-black flex-1 ml-4" />
+        </div>
       </div>
     </div>
   );
