@@ -65,7 +65,6 @@ export default function Sales() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-            <thead>
               <tr className="bg-surface border-b border-black text-left">
                 <th className="px-6 py-4 text-[10px] font-bold text-primary uppercase tracking-[0.3em]">Date & Time</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-primary uppercase tracking-[0.3em]">ID</th>
@@ -75,7 +74,6 @@ export default function Sales() {
                 <th className="px-6 py-4 text-[10px] font-bold text-primary uppercase tracking-[0.3em] text-center">Status</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-primary uppercase tracking-[0.3em] text-right">Actions</th>
               </tr>
-            </thead>
             </thead>
             <tbody className="divide-y divide-border">
               {filteredSales?.map((sale) => (

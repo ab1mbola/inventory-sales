@@ -142,7 +142,7 @@ export default function POS() {
   ];
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] bg-white font-sans overflow-hidden">
+    <div className="flex flex-col h-[calc(100vh-10px)] bg-white font-sans overflow-hidden">
       {createSale.isPending && <LoadingOverlay message="Processing Payment..." />}
       
       {completedSale && (
@@ -201,7 +201,7 @@ export default function POS() {
         <div className="max-w-[1400px] mx-auto h-full flex flex-col">
           
           {currentStep === 1 && (
-            <div className="flex-1 flex flex-col items-center justify-center p-8 lg:p-20 animate-in fade-in slide-in-from-bottom-8 duration-500">
+            <div className="flex-1 flex flex-col items-center justify-center p-8 lg:p-5 animate-in fade-in slide-in-from-bottom-8 duration-500">
               <div className="w-full max-w-2xl space-y-12">
                 <div className="text-center space-y-4">
                    <User className="mx-auto text-accent mb-8" size={48} strokeWidth={1} />
