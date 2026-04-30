@@ -35,8 +35,8 @@ async function main() {
       sku: 'ELEC-PHONE-001',
       name: 'Smartphone Pro',
       description: 'Latest 5G smartphone',
-      price: 699.99,
-      cost: 450.00,
+      price: '699.99',
+      cost: '450.00',
       stockLevel: 50,
       minStock: 10,
       categoryId: electronics.id

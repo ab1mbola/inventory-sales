@@ -1,26 +1,21 @@
 import { useReports } from '../hooks/useReports';
 import Chart from 'react-apexcharts';
 import { 
-  BarChart, 
-  PieChart, 
   TrendingUp, 
-  DollarSign, 
-  Package, 
   CreditCard,
   Download
 } from 'lucide-react';
 import type { ApexOptions } from 'apexcharts';
 
+import FullPageLoader from '../components/FullPageLoader';
+
 export default function Reports() {
   const { data, isLoading } = useReports();
 
   if (isLoading) {
-    return (
-      <div className="p-8 flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>
-    );
+    return <FullPageLoader message="Analyzing Records..." />;
   }
+
 
   // Monthly Performance Chart Options
   const monthlyOptions: ApexOptions = {
@@ -30,36 +25,33 @@ export default function Reports() {
       background: 'transparent',
       stacked: false,
     },
-    colors: ['#3b82f6', '#10b981'],
+    colors: ['#000000', '#E91E63'],
     fill: {
-      type: 'gradient',
-      gradient: {
-        shadeIntensity: 1,
-        opacityFrom: 0.45,
-        opacityTo: 0.05,
-        stops: [20, 100]
-      }
+      type: 'solid',
+      opacity: 0.05
     },
-    stroke: { curve: 'smooth', width: 3 },
+    stroke: { curve: 'straight', width: 2 },
     xaxis: {
       categories: data?.monthlyPerformance.map(m => m.month) || [],
-      axisBorder: { show: false },
+      axisBorder: { color: '#000000', height: 1 },
       axisTicks: { show: false },
-      labels: { style: { colors: '#64748b' } }
+      labels: { style: { colors: '#94a3b8', fontSize: '10px', fontWeight: 'bold' } }
     },
     yaxis: {
       labels: { 
-        style: { colors: '#64748b' },
+        style: { colors: '#94a3b8', fontSize: '10px', fontWeight: 'bold' },
         formatter: (val) => `₦${(val / 1000).toFixed(0)}k`
       }
     },
-    grid: { borderColor: '#1e293b', strokeDashArray: 4 },
+    grid: { borderColor: '#f1f5f9', strokeDashArray: 0 },
     legend: {
       position: 'top',
       horizontalAlign: 'right',
-      labels: { colors: '#f1f5f9' }
+      fontFamily: 'Inter',
+      fontWeight: 'bold',
+      labels: { colors: '#000000' }
     },
-    tooltip: { theme: 'dark' }
+    tooltip: { theme: 'light', style: { fontSize: '12px', fontFamily: 'Inter' } }
   };
 
   const monthlySeries = [
@@ -76,28 +68,33 @@ export default function Reports() {
   // Category Distribution Chart
   const categoryOptions: ApexOptions = {
     chart: { type: 'donut' },
-    labels: data?.categoryDistribution.map(c => c.name) || [],
-    colors: ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'],
-    stroke: { show: false },
+    labels: data?.categoryDistribution.map(c => c.name.toUpperCase()) || [],
+    colors: ['#000000', '#E91E63', '#334155', '#94a3b8', '#f1f5f9'],
+    stroke: { show: true, width: 2, colors: ['#ffffff'] },
     legend: {
       position: 'bottom',
-      labels: { colors: '#f1f5f9' }
+      fontFamily: 'Inter',
+      fontWeight: 'bold',
+      labels: { colors: '#94a3b8' }
     },
     plotOptions: {
       pie: {
         donut: {
-          size: '75%',
+          size: '80%',
           labels: {
             show: true,
-            name: { color: '#64748b' },
+            name: { color: '#94a3b8', fontWeight: 'bold', fontSize: '10px' },
             value: { 
-              color: '#f1f5f9',
+              color: '#000000',
+              fontWeight: 'bold',
+              fontFamily: 'Fraunces',
+              fontSize: '20px',
               formatter: (val) => `₦${Number(val).toLocaleString()}`
             },
             total: {
               show: true,
-              label: 'Total Sales',
-              color: '#64748b',
+              label: 'TOTAL',
+              color: '#94a3b8',
               formatter: (w) => {
                 const total = w.globals.seriesTotals.reduce((a: number, b: number) => a + b, 0);
                 return `₦${total.toLocaleString()}`;
@@ -106,117 +103,123 @@ export default function Reports() {
           }
         }
       }
-    },
-    tooltip: { theme: 'dark' }
+    }
   };
 
   return (
-    <div className="p-4 lg:p-8 space-y-8 max-w-7xl mx-auto">
+    <div className="p-4 lg:p-8 max-w-[1600px] mx-auto space-y-8 bg-white font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-black pb-8">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-100">Analytics & Reports</h1>
-          <p className="text-sm text-gray-400 mt-1">Deep dive into your business performance.</p>
+          <h1 className="text-2xl lg:text-3xl font-serif font-bold tracking-tighter uppercase leading-none italic">Reports</h1>
+          <p className="text-[10px] text-muted mt-3 uppercase tracking-[0.4em] font-bold italic">Business performance overview</p>
         </div>
         <button 
           onClick={() => window.print()}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-xl text-sm font-medium transition-all border border-gray-700 print:hidden"
+          className="craft-btn h-12 px-8 flex items-center gap-3 text-[10px] print:hidden"
         >
           <Download size={18} />
-          Export PDF
+          EXECUTE EXPORT
         </button>
       </div>
 
       {/* Inventory Valuation Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl backdrop-blur-sm relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <Package size={80} />
+        <div className="craft-card p-6 bg-surface/30 group">
+          <p className="text-[10px] font-bold text-muted uppercase tracking-[0.3em]">Total Items</p>
+          <h3 className="text-2xl font-serif font-bold italic text-primary mt-4 tracking-tight leading-none">
+            {data?.inventoryStats.totalItems.toLocaleString()}
+          </h3>
+          <div className="mt-6 pt-6 border-t border-border flex items-center gap-3">
+            <div className="w-2 h-2 bg-primary rounded-full" />
+            <p className="text-[9px] text-muted font-bold uppercase tracking-widest">Items in stock</p>
           </div>
-          <p className="text-sm text-gray-400 font-medium">Inventory Count</p>
-          <h3 className="text-2xl font-bold text-gray-100 mt-2">{data?.inventoryStats.totalItems.toLocaleString()}</h3>
-          <p className="text-xs text-gray-500 mt-1">Total items currently in stock</p>
         </div>
-        <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl backdrop-blur-sm relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <DollarSign size={80} />
+        
+        <div className="craft-card p-6 bg-surface/30 group border-l-4 border-l-primary">
+          <p className="text-[10px] font-bold text-muted uppercase tracking-[0.3em]">Total Value</p>
+          <h3 className="text-2xl font-serif font-bold italic text-primary mt-4 tracking-tight leading-none">
+            ₦{data?.inventoryStats.totalValue.toLocaleString()}
+          </h3>
+          <div className="mt-6 pt-6 border-t border-border flex items-center gap-3">
+            <div className="w-2 h-2 bg-primary rounded-full" />
+            <p className="text-[9px] text-muted font-bold uppercase tracking-widest">Potential revenue</p>
           </div>
-          <p className="text-sm text-gray-400 font-medium">Inventory Value (Retail)</p>
-          <h3 className="text-2xl font-bold text-blue-400 mt-2">₦{data?.inventoryStats.totalValue.toLocaleString()}</h3>
-          <p className="text-xs text-gray-500 mt-1">Total potential revenue from stock</p>
         </div>
-        <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl backdrop-blur-sm relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <TrendingUp size={80} />
+
+        <div className="craft-card p-6 bg-primary group">
+          <p className="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em]">Total Profit</p>
+          <h3 className="text-2xl font-serif font-bold italic text-white mt-4 tracking-tight leading-none">
+            ₦{(data?.inventoryStats.totalValue! - data?.inventoryStats.totalCost!).toLocaleString()}
+          </h3>
+          <div className="mt-6 pt-6 border-t border-white/10 flex items-center gap-3">
+            <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+            <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest">Estimated profit</p>
           </div>
-          <p className="text-sm text-gray-400 font-medium">Estimated Equity</p>
-          <h3 className="text-2xl font-bold text-emerald-400 mt-2">₦{(data?.inventoryStats.totalValue! - data?.inventoryStats.totalCost!).toLocaleString()}</h3>
-          <p className="text-xs text-gray-500 mt-1">Total projected profit from stock</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Monthly Trend */}
-        <div className="lg:col-span-2 bg-gray-900/50 border border-gray-800 p-6 rounded-3xl backdrop-blur-sm">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500">
-                <BarChart size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-100">Performance Trend</h3>
-            </div>
+        <div className="lg:col-span-2 craft-card p-6">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.4em] flex items-center gap-4">
+              <TrendingUp size={16} />
+              Monthly Trend
+            </h3>
+            <div className="h-px bg-border flex-1 mx-8" />
           </div>
-          <Chart options={monthlyOptions} series={monthlySeries} type="area" height={350} />
+          <Chart options={monthlyOptions} series={monthlySeries} type="area" height={320} />
         </div>
 
         {/* Category Distribution */}
-        <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl backdrop-blur-sm">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-purple-500/10 rounded-lg text-purple-500">
-              <PieChart size={20} />
-            </div>
-            <h3 className="text-lg font-bold text-gray-100">Sales by Category</h3>
+        <div className="craft-card p-6 bg-surface/10">
+          <div className="flex items-center gap-4 mb-8">
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.4em]">Categories</h3>
           </div>
-          <div className="h-[350px] flex items-center justify-center">
+          <div className="h-[320px] flex items-center justify-center">
             <Chart options={categoryOptions} series={data?.categoryDistribution.map(c => c.value) || []} type="donut" width="100%" />
           </div>
         </div>
       </div>
 
       {/* Payment Method Analysis */}
-      <div className="bg-gray-900/50 border border-gray-800 rounded-3xl overflow-hidden backdrop-blur-sm">
-        <div className="p-6 border-b border-gray-800 flex items-center gap-3">
-          <div className="p-2 bg-amber-500/10 rounded-lg text-amber-500">
-            <CreditCard size={20} />
-          </div>
-          <h3 className="text-lg font-bold text-gray-100">Payment Method Breakdown</h3>
+      <div className="craft-card overflow-hidden">
+        <div className="p-6 border-b border-border flex items-center justify-between bg-surface/50">
+          <h3 className="text-[10px] font-bold uppercase tracking-[0.4em] flex items-center gap-4">
+            <CreditCard size={18} strokeWidth={1} />
+            Payment Methods
+          </h3>
+          <div className="h-px bg-border flex-1 mx-8" />
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-gray-800/30 text-gray-500 uppercase text-[10px] font-bold tracking-widest">
-              <tr>
-                <th className="px-6 py-4">Method</th>
-                <th className="px-6 py-4 text-center">Transactions</th>
-                <th className="px-6 py-4 text-right">Total Amount</th>
-                <th className="px-6 py-4 text-right">Avg. Value</th>
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-white border-b border-border text-left">
+                <th className="px-10 py-6 text-[10px] font-bold text-muted uppercase tracking-[0.3em]">Method</th>
+                <th className="px-10 py-6 text-[10px] font-bold text-muted uppercase tracking-[0.3em] text-center">Sales</th>
+                <th className="px-10 py-8 text-[10px] font-bold text-muted uppercase tracking-[0.3em] text-right">Total Amount</th>
+                <th className="px-10 py-8 text-[10px] font-bold text-muted uppercase tracking-[0.3em] text-right">Average Value</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-800">
+            <tbody className="divide-y divide-border">
               {data?.paymentDistribution.map((pm) => (
-                <tr key={pm.method} className="hover:bg-gray-800/30 transition-colors">
+                <tr key={pm.method} className="hover:bg-surface/30 transition-all">
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-2 h-2 rounded-full ${
-                        pm.method === 'CASH' ? 'bg-emerald-500' : 
-                        pm.method === 'CREDIT' ? 'bg-amber-500' : 
-                        'bg-blue-500'
+                    <div className="flex items-center gap-6">
+                      <div className={`w-1.5 h-6 ${
+                        pm.method === 'CASH' ? 'bg-primary' : 
+                        pm.method === 'CREDIT' ? 'bg-accent' : 
+                        'bg-slate-400'
                       }`} />
-                      <span className="font-medium text-gray-200">{pm.method}</span>
+                      <span className="font-bold text-primary text-xs uppercase tracking-widest">{pm.method}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-center text-gray-400 font-mono">{pm.count}</td>
-                  <td className="px-6 py-4 text-right font-bold text-gray-100">₦{pm.amount.toLocaleString()}</td>
-                  <td className="px-6 py-4 text-right text-gray-400">₦{(pm.amount / pm.count).toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                  <td className="px-6 py-4 text-center text-[10px] font-bold text-muted uppercase tracking-widest">{pm.count} UNITS</td>
+                  <td className="px-6 py-4 text-right font-serif font-bold italic text-primary text-base">₦{pm.amount.toLocaleString()}</td>
+                  <td className="px-6 py-4 text-right text-[10px] font-bold text-muted uppercase tracking-widest opacity-40">
+                    ₦{(pm.amount / pm.count).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  </td>
                 </tr>
               ))}
             </tbody>

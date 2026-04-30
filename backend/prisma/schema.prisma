@@ -120,6 +120,15 @@ model Expense {
   @@index([date])
 }
 
+model CompanySettings {
+  id            String   @id
+  name          String
+  logo          String?  // Base64 string
+  copyrightText String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
 enum Role {
   OWNER
   MANAGER

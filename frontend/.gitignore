@@ -24,3 +24,10 @@ dist-ssr
 *.sw?
 
 .env
+
+# AI Tooling Metadata
+.agents/
+.junie/
+.trae/
+skills/
+skills-lock.json
