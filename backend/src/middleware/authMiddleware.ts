@@ -7,6 +7,20 @@ const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-change-me';
 
 // Extend Express Request type via global augmentation in src/types/express.d.ts
 // We can still export a helper type if we want, but it should be optional
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        companyId: string;
+        role: string;
+      };
+      db: ScopedDB;
+    }
+  }
+}
+
+// Export a helper type that we use in controllers
 export type AuthenticatedRequest = Request;
 
 export const authenticate = async (req: any, res: Response, next: NextFunction) => {
