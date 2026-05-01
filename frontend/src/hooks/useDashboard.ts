@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { api } from '../services/api';
-import type { DashboardData } from '../types';
+import { dashboardService } from '../services/dashboardService';
 
 export function useDashboard() {
-  return useQuery<DashboardData>({
+  return useQuery({
     queryKey: ['dashboard'],
-    queryFn: () => api.get('/dashboard/stats').then((res) => res.data),
+    queryFn: () => dashboardService.getStats(),
     refetchInterval: 30000, // Auto-refresh every 30s
   });
 }
