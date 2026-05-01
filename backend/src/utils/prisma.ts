@@ -5,7 +5,14 @@ import { PrismaPg } from '@prisma/adapter-pg';
 // Bypasses SSL certificate validation errors (common in Supabase IPv4 environments)
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DB_ENV === 'prod' 
+  ? process.env.DATABASE_URL_PROD 
+  : process.env.DATABASE_URL_DEV;
+
+if (!connectionString) {
+  console.error(`Error: DATABASE_URL_${process.env.DB_ENV?.toUpperCase() || 'DEV'} is missing in .env`);
+  process.exit(1);
+}
 
 const pool = new Pool({ 
   connectionString,
