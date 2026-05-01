@@ -4,7 +4,17 @@ import * as bcrypt from 'bcryptjs';
 async function main() {
   console.log('Seeding database...');
   
-  // Create default Admin
+  // 1. Create default Company
+  const company = await prisma.company.upsert({
+    where: { id: 'default-company-id' }, // Use a fixed ID for consistent seeding
+    update: {},
+    create: {
+      id: 'default-company-id',
+      name: 'Default Company'
+    }
+  });
+
+  // 2. Create default Admin
   const adminPassword = await bcrypt.hash('password123', 10);
   await prisma.user.upsert({
     where: { email: 'admin@inventory.com' },
@@ -13,23 +23,25 @@ async function main() {
       email: 'admin@inventory.com',
       password: adminPassword,
       name: 'Admin User',
-      role: 'OWNER'
+      role: 'OWNER',
+      companyId: company.id
     }
   });
 
-  // Create a Category
+  // 3. Create a Category
   const electronics = await prisma.category.upsert({
-    where: { name: 'Electronics' },
+    where: { companyId_name: { companyId: company.id, name: 'Electronics' } },
     update: {},
     create: {
       name: 'Electronics',
-      description: 'Gadgets and electronic devices'
+      description: 'Gadgets and electronic devices',
+      companyId: company.id
     }
   });
 
-  // Create a Product
-  const phone = await prisma.product.upsert({
-    where: { sku: 'ELEC-PHONE-001' },
+  // 4. Create a Product
+  await prisma.product.upsert({
+    where: { companyId_sku: { companyId: company.id, sku: 'ELEC-PHONE-001' } },
     update: {},
     create: {
       sku: 'ELEC-PHONE-001',
@@ -39,7 +51,8 @@ async function main() {
       cost: '450.00',
       stockLevel: 50,
       minStock: 10,
-      categoryId: electronics.id
+      categoryId: electronics.id,
+      companyId: company.id
     }
   });
 

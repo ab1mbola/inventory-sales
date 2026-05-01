@@ -31,6 +31,7 @@ export const createCustomer = async (req: AuthenticatedRequest, res: Response) =
         phone,
         address,
         creditLimit: creditLimit ? Number(creditLimit) : null,
+        companyId: req.user!.companyId
       },
     });
     res.json(customer);

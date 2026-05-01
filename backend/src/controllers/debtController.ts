@@ -76,6 +76,7 @@ export const recordPayment = async (req: AuthenticatedRequest, res: Response) =>
         amount: Number(amount),
         method: method || 'CASH',
         note: note || '',
+        companyId: req.user!.companyId
       }
     });
 

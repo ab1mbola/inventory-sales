@@ -19,7 +19,11 @@ export const createCategory = async (req: AuthenticatedRequest, res: Response) =
       return res.status(400).json({ error: 'Category name is required' });
     }
     const category = await req.db.category.create({
-      data: { name, description },
+      data: { 
+        name, 
+        description,
+        companyId: req.user!.companyId
+      },
     });
     res.status(201).json(category);
   } catch (error: any) {
