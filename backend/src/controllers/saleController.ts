@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
-import { prisma } from '../utils/prisma';
+import { Response } from 'express';
+import { AuthenticatedRequest } from '../middleware/authMiddleware';
 
-export const getSales = async (req: Request, res: Response) => {
+export const getSales = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const sales = await prisma.sale.findMany({
+    const sales = await req.db.sale.findMany({
       include: {
         items: {
           include: { product: true }
@@ -18,12 +18,11 @@ export const getSales = async (req: Request, res: Response) => {
   }
 };
 
-export const createSale = async (req: Request, res: Response) => {
+export const createSale = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { 
       items, 
       paymentMethod, 
-      userId, 
       amountReceived, 
       changeAmount, 
       customerName, 
@@ -38,7 +37,7 @@ export const createSale = async (req: Request, res: Response) => {
     const totalAmount = items.reduce((sum: number, item: any) => sum + (Number(item.price) * Number(item.quantity)), 0);
     const totalCost = items.reduce((sum: number, item: any) => sum + (Number(item.cost) * Number(item.quantity)), 0);
 
-    const sale = await prisma.$transaction(async (tx: any) => {
+    const sale = await req.db.$transaction(async (tx: any) => {
       const newSale = await tx.sale.create({
         data: {
           totalAmount,
@@ -49,7 +48,7 @@ export const createSale = async (req: Request, res: Response) => {
           customerName: customerName || null,
           customerPhone: customerPhone || null,
           customerId: customerId || null,
-          userId: userId || null,
+          userId: req.user?.id || null,
           items: {
             create: items.map((item: any) => ({
               productId: item.productId,
