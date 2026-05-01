@@ -1,105 +1,250 @@
 /// <reference types="node" />
-import 'dotenv/config'; // Ensure env vars are loaded before anything else
+import 'dotenv/config';
 import { internal_unscoped_prisma as prisma } from '../src/db/client';
 
-const DRY_RUN = process.argv.includes('--dry-run');
+// 1. EXECUTION MODES
+const IS_EXECUTE = process.argv.includes('--execute');
+const FORCE_MULTI = process.argv.includes('--force-multi-company-migration');
+
+// 4. REMOVE TYPECAST SILENT FAILURES
+// Migration-only workaround for querying fields that are marked NOT NULL in the Prisma schema
+// but are currently nullable in the underlying database during this specific migration phase.
+const ORPHAN_WHERE = { companyId: null } as unknown as any;
+
+// Define Registry Type
+type RegistryEntry = {
+  model: string;
+  countFn: (client: any) => Promise<number>;
+  updateFn: (tx: any, companyId: string) => Promise<number>;
+  groupByFn: (client: any) => Promise<any[]>;
+};
+
+// 3. CENTRALIZED MIGRATION REGISTRY
+// Order matters: 'Sale' must be updated before 'SaleItem'
+const registry: RegistryEntry[] = [
+  {
+    model: 'User',
+    countFn: async (client) => Number((await client.$queryRaw`SELECT COUNT(*)::int as count FROM "User" WHERE "companyId" IS NULL` as any)[0].count),
+    updateFn: async (tx, companyId) => Number(await tx.$executeRaw`UPDATE "User" SET "companyId" = ${companyId} WHERE "companyId" IS NULL`),
+    groupByFn: (client) => client.user.groupBy({ by: ['companyId'], _count: { id: true } }),
+  },
+  {
+    model: 'Category',
+    countFn: async (client) => Number((await client.$queryRaw`SELECT COUNT(*)::int as count FROM "Category" WHERE "companyId" IS NULL` as any)[0].count),
+    updateFn: async (tx, companyId) => Number(await tx.$executeRaw`UPDATE "Category" SET "companyId" = ${companyId} WHERE "companyId" IS NULL`),
+    groupByFn: (client) => client.category.groupBy({ by: ['companyId'], _count: { id: true } }),
+  },
+  {
+    model: 'Product',
+    countFn: async (client) => Number((await client.$queryRaw`SELECT COUNT(*)::int as count FROM "Product" WHERE "companyId" IS NULL` as any)[0].count),
+    updateFn: async (tx, companyId) => Number(await tx.$executeRaw`UPDATE "Product" SET "companyId" = ${companyId} WHERE "companyId" IS NULL`),
+    groupByFn: (client) => client.product.groupBy({ by: ['companyId'], _count: { id: true } }),
+  },
+  {
+    model: 'Customer',
+    countFn: async (client) => Number((await client.$queryRaw`SELECT COUNT(*)::int as count FROM "Customer" WHERE "companyId" IS NULL` as any)[0].count),
+    updateFn: async (tx, companyId) => Number(await tx.$executeRaw`UPDATE "Customer" SET "companyId" = ${companyId} WHERE "companyId" IS NULL`),
+    groupByFn: (client) => client.customer.groupBy({ by: ['companyId'], _count: { id: true } }),
+  },
+  {
+    model: 'CustomerPayment',
+    countFn: async (client) => Number((await client.$queryRaw`SELECT COUNT(*)::int as count FROM "CustomerPayment" WHERE "companyId" IS NULL` as any)[0].count),
+    updateFn: async (tx, companyId) => Number(await tx.$executeRaw`UPDATE "CustomerPayment" SET "companyId" = ${companyId} WHERE "companyId" IS NULL`),
+    groupByFn: (client) => client.customerPayment.groupBy({ by: ['companyId'], _count: { id: true } }),
+  },
+  {
+    model: 'Sale',
+    countFn: async (client) => Number((await client.$queryRaw`SELECT COUNT(*)::int as count FROM "Sale" WHERE "companyId" IS NULL` as any)[0].count),
+    updateFn: async (tx, companyId) => Number(await tx.$executeRaw`UPDATE "Sale" SET "companyId" = ${companyId} WHERE "companyId" IS NULL`),
+    groupByFn: (client) => client.sale.groupBy({ by: ['companyId'], _count: { id: true } }),
+  },
+  {
+    model: 'Expense',
+    countFn: async (client) => Number((await client.$queryRaw`SELECT COUNT(*)::int as count FROM "Expense" WHERE "companyId" IS NULL` as any)[0].count),
+    updateFn: async (tx, companyId) => Number(await tx.$executeRaw`UPDATE "Expense" SET "companyId" = ${companyId} WHERE "companyId" IS NULL`),
+    groupByFn: (client) => client.expense.groupBy({ by: ['companyId'], _count: { id: true } }),
+  },
+  // 3. HARDEN SALEITEM SAFETY
+  {
+    model: 'SaleItem',
+    countFn: async (client) => Number((await client.$queryRaw`SELECT COUNT(*)::int as count FROM "SaleItem" WHERE "companyId" IS NULL` as any)[0].count),
+    updateFn: async (tx, _companyId) => {
+      // Intentionally ignoring the passed companyId to enforce deriving strictly from parent Sale.
+      // Explicitly checking "Sale"."companyId" IS NOT NULL to prevent fallback assumptions.
+      const res = await tx.$executeRaw`
+        UPDATE "SaleItem"
+        SET "companyId" = "Sale"."companyId"
+        FROM "Sale"
+        WHERE "SaleItem"."saleId" = "Sale"."id"
+        AND "SaleItem"."companyId" IS NULL
+        AND "Sale"."companyId" IS NOT NULL
+      `;
+      return Number(res);
+    },
+    groupByFn: (client) => client.saleItem.groupBy({ by: ['companyId'], _count: { id: true } }),
+  }
+];
 
 async function main() {
-  console.log('--- Multi-Tenant Backfill Script ---');
-  if (DRY_RUN) console.log('[DRY RUN] No changes will be persisted to the database.\n');
-
-  // 1. Get company source info
-  // If CompanySettings is gone, we use default values
-  let companyName = "Default Company";
-  let companyLogo = null;
-  let companyCopyright = null;
-
-  try {
-    // We use a raw query check if CompanySettings table still exists during migration
-    const settings: any = await prisma.$queryRaw`SELECT * FROM "CompanySettings" LIMIT 1`.catch(() => null);
-    if (settings && settings.length > 0) {
-      companyName = settings[0].name;
-      companyLogo = settings[0].logo;
-      companyCopyright = settings[0].copyrightText;
-    }
-  } catch (e) {
-    console.log('Note: CompanySettings table not found or inaccessible, using defaults.');
+  const startTime = Date.now();
+  console.log('--- STRICT MULTI-TENANT MIGRATION RUNNER ---');
+  
+  if (IS_EXECUTE) {
+    console.log('\n======================================');
+    console.log('          EXECUTE MODE ⚠️          ');
+    console.log('   Data mutation is ENABLED.          ');
+    console.log('======================================\n');
+  } else {
+    console.log('\n======================================');
+    console.log('          DRY RUN MODE              ');
+    console.log(' No writes will occur. Pass --execute to run.');
+    console.log('======================================\n');
   }
 
-  // 2. Check for existing companies to prevent duplicates
-  const existingCompanyCount = await prisma.company.count();
-  if (existingCompanyCount > 0) {
-    console.log(`ℹ️ INFO: ${existingCompanyCount} company(s) already exist. Skipping creation.`);
+  // 1. REMOVE ENVIRONMENT ASSUMPTION (Precondition Check)
+  console.log('Running Precondition Checks...');
+  const companyCount = await prisma.company.count();
+  console.log(`- Companies found in DB: ${companyCount}`);
+
+  if (companyCount > 1 && !FORCE_MULTI) {
+    console.error('\n❌ FATAL: Precondition failed.');
+    console.error(`Found ${companyCount} companies.`);
+    console.error('This runner is intended for single-tenant to multi-tenant migration.');
+    console.error('Because multiple companies exist, guessing ownership of orphan records is dangerous.');
+    console.error('\nTo proceed, you must pass the --force-multi-company-migration flag.');
+    console.error('If forced, all orphan records will be assigned to a new, isolated "Orphaned Records Archive" company to prevent cross-tenant corruption.');
+    process.exit(1);
   }
 
-  // 3. Summary of records to backfill
-  // We cast to any to bypass the non-nullable type check for companyId
-  const counts = {
-    users: await prisma.user.count({ where: { companyId: null } as any }),
-    categories: await prisma.category.count({ where: { companyId: null } as any }),
-    products: await prisma.product.count({ where: { companyId: null } as any }),
-    customers: await prisma.customer.count({ where: { companyId: null } as any }),
-    payments: await prisma.customerPayment.count({ where: { companyId: null } as any }),
-    sales: await prisma.sale.count({ where: { companyId: null } as any }),
-    expenses: await prisma.expense.count({ where: { companyId: null } as any }),
+  const report = {
+    duration: 0,
+    tablesUpdated: {} as Record<string, number>,
+    orphanCountsBefore: {} as Record<string, number>,
+    orphanCountsAfter: {} as Record<string, number>,
+    companyIdUsed: null as string | null,
+    status: 'PENDING',
+    multiCompanySpread: {} as Record<string, any[]>
   };
 
-  console.log('Records to backfill (unassigned):');
-  console.table(counts);
+  console.log('\nScanning for orphan records (companyId IS NULL)...');
+  let totalOrphans = 0;
 
-  if (Object.values(counts).every(c => c === 0)) {
-    console.log('✅ No unassigned records found. Migration may already be complete.');
+  for (const entry of registry) {
+    const count = await entry.countFn(prisma);
+    report.orphanCountsBefore[entry.model] = count;
+    totalOrphans += count;
+  }
+
+  console.table(report.orphanCountsBefore);
+
+  if (totalOrphans === 0) {
+    console.log('\n✅ No orphan records found. Database is fully migrated.');
+    report.status = 'SUCCESS_NO_OP';
+    report.duration = Date.now() - startTime;
+    console.log('\n--- FINAL MIGRATION REPORT ---');
+    console.log(JSON.stringify(report, null, 2));
     return;
   }
 
-  if (DRY_RUN) {
-    console.log('\n[DRY RUN] Backfill summary complete. Exiting.');
-    return;
-  }
-
-  // 4. Execute Backfill in Transaction
-  console.log('\nStarting backfill...');
-  
   try {
+    if (!IS_EXECUTE) {
+      console.log('\n[DRY RUN] Scan complete. Exiting without changes.');
+      report.status = 'DRY_RUN_COMPLETE';
+      return;
+    }
+
+    console.log('\n🚀 Starting Transactional Migration...');
+
     await prisma.$transaction(async (tx) => {
-      // Create the default company
-      const defaultCompany = await tx.company.create({
-        data: {
-          name: companyName,
-          logo: companyLogo,
-          copyrightText: companyCopyright,
-        },
-      });
+      let activeCompanyId: string;
 
-      const companyId = defaultCompany.id;
-      console.log(`✅ Created default company: ${companyName} (${companyId})`);
+      if (companyCount === 0) {
+        console.log('  - No company found. Creating "Default Company"...');
+        const defaultCompany = await tx.company.create({
+          data: { name: 'Default Company' },
+        });
+        activeCompanyId = defaultCompany.id;
+        console.log(`  - ✅ Created Default Company: ${activeCompanyId}`);
+      } else if (companyCount === 1) {
+        const existingCompany = await tx.company.findFirstOrThrow();
+        activeCompanyId = existingCompany.id;
+        console.log(`  - Using existing Company ID: ${activeCompanyId}`);
+      } else {
+        console.log('  - ⚠️ FORCE FLAG DETECTED with >1 companies.');
+        console.log('  - Creating isolated "Orphaned Records Archive" to prevent data leakage...');
+        const archiveCompany = await tx.company.create({
+          data: { name: 'Orphaned Records Archive' },
+        });
+        activeCompanyId = archiveCompany.id;
+        console.log(`  - ✅ Created Archive Company: ${activeCompanyId}`);
+      }
 
-      // Link all unassigned records
-      const results = await Promise.all([
-        tx.user.updateMany({ where: { companyId: null } as any, data: { companyId } }),
-        tx.category.updateMany({ where: { companyId: null } as any, data: { companyId } }),
-        tx.product.updateMany({ where: { companyId: null } as any, data: { companyId } }),
-        tx.customer.updateMany({ where: { companyId: null } as any, data: { companyId } }),
-        tx.customerPayment.updateMany({ where: { companyId: null } as any, data: { companyId } }),
-        tx.sale.updateMany({ where: { companyId: null } as any, data: { companyId } }),
-        tx.expense.updateMany({ where: { companyId: null } as any, data: { companyId } }),
-      ]);
+      report.companyIdUsed = activeCompanyId;
 
-      console.log('Update results:');
-      console.log(`- Users: ${results[0].count}`);
-      console.log(`- Categories: ${results[1].count}`);
-      console.log(`- Products: ${results[2].count}`);
-      console.log(`- Customers: ${results[3].count}`);
-      console.log(`- Customer Payments: ${results[4].count}`);
-      console.log(`- Sales: ${results[5].count}`);
-      console.log(`- Expenses: ${results[6].count}`);
+      console.log('\nExecuting Table Updates:');
+      
+      for (const entry of registry) {
+        if (report.orphanCountsBefore[entry.model] > 0) {
+          const updateCount = await entry.updateFn(tx, activeCompanyId);
+          report.tablesUpdated[entry.model] = updateCount;
+          console.log(`  - [${entry.model}] Updated ${updateCount} records.`);
+          
+          if (updateCount !== report.orphanCountsBefore[entry.model] && entry.model !== 'SaleItem') {
+             console.warn(`    ⚠️ Warning: Expected to update ${report.orphanCountsBefore[entry.model]}, but updated ${updateCount}.`);
+          }
+        } else {
+          report.tablesUpdated[entry.model] = 0;
+          console.log(`  - [${entry.model}] No updates needed.`);
+        }
+      }
+
+      console.log('\nRunning Post-Migration Validation...');
+      let validationFailed = false;
+
+      for (const entry of registry) {
+        const remaining = await entry.countFn(tx);
+        report.orphanCountsAfter[entry.model] = remaining;
+        
+        if (remaining > 0) {
+          console.error(`  - ❌ [${entry.model}] FAILED: ${remaining} orphan records remain!`);
+          validationFailed = true;
+        } else {
+          console.log(`  - ✅ [${entry.model}] Clean (0 orphans).`);
+        }
+      }
+
+      if (validationFailed) {
+        throw new Error('Validation Phase Failed. Orphan records remain. Forcing transaction rollback.');
+      }
+
+      console.log('\n✅ All primary validations passed.');
     });
 
-    console.log('\n✨ Backfill completed successfully!');
+    // 2. ADD POST-MIGRATION INTEGRITY CHECK (Outside Transaction to reflect committed state)
+    console.log('\nPerforming Multi-Company Spread Analysis...');
+    for (const entry of registry) {
+      const spread = await entry.groupByFn(prisma);
+      report.multiCompanySpread[entry.model] = spread;
+    }
+
+    report.status = 'SUCCESS';
+    report.duration = Date.now() - startTime;
+    
+    console.log('\n✨ MIGRATION COMPLETED SUCCESSFULLY ✨');
+    
   } catch (error) {
-    console.error('\n❌ Backfill failed. All changes rolled back.');
+    report.status = 'FAILED';
+    report.duration = Date.now() - startTime;
+    console.error('\n🚨 MIGRATION ABORTED. FULL TRANSACTION ROLLBACK EXECUTED. 🚨');
     console.error(error);
-    process.exit(1);
+  } finally {
+    // 5. ADD FINAL "MIGRATION REPORT OBJECT"
+    console.log('\n--- FINAL MIGRATION REPORT ---');
+    console.log(JSON.stringify(report, null, 2));
+    
+    if (report.status === 'FAILED') {
+      process.exit(1);
+    }
   }
 }
 
