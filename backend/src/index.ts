@@ -3,34 +3,15 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { prisma } from './utils/prisma';
+import { internal_unscoped_prisma as prisma } from './db/client';
 
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Test DB connection and bootstrap tables
+// Test DB connection
 prisma.$connect()
-  .then(async () => {
-    console.log('Successfully connected to the database');
-    // Ensure CompanySettings table exists
-    try {
-      await prisma.$executeRawUnsafe(`
-        CREATE TABLE IF NOT EXISTS "CompanySettings" (
-            "id" TEXT NOT NULL,
-            "name" TEXT NOT NULL,
-            "logo" TEXT,
-            "copyrightText" TEXT,
-            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            CONSTRAINT "CompanySettings_pkey" PRIMARY KEY ("id")
-        );
-      `);
-      console.log('Database tables verified.');
-    } catch (e) {
-      console.error('Table verification failed:', e);
-    }
-  })
-  .catch((err) => console.error('CRITICAL: Database connection failed:', err));
+  .then(() => console.log('Successfully connected to the database'))
+  .catch((err: any) => console.error('CRITICAL: Database connection failed:', err));
 
 app.use(cors());
 app.use(express.json());
