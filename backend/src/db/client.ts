@@ -51,7 +51,7 @@ export const internal_unscoped_prisma = new Proxy(basePrisma, {
     }
 
     // Allow infrastructure models for authentication and system configuration
-    const infrastructureModels = ['user', 'company', 'companySettings'];
+    const infrastructureModels = ['user', 'company'];
     if (infrastructureModels.includes(sProp)) {
       return Reflect.get(target, prop, receiver);
     }

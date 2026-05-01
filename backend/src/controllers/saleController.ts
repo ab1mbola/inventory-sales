@@ -54,7 +54,8 @@ export const createSale = async (req: AuthenticatedRequest, res: Response) => {
               productId: item.productId,
               quantity: Number(item.quantity),
               price: Number(item.price),
-              cost: Number(item.cost)
+              cost: Number(item.cost),
+              companyId: req.user!.companyId // Explicit injection for nested create
             }))
           }
         },

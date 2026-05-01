@@ -115,13 +115,13 @@ model SaleItem {
   id        String  @id @default(uuid())
   saleId    String
   productId String
-  companyId String?
+  companyId String
   quantity  Int
   price     Decimal @db.Decimal(10, 2)
   cost      Decimal @db.Decimal(10, 2)
   product   Product @relation(fields: [productId], references: [id])
   sale      Sale    @relation(fields: [saleId], references: [id])
-  company   Company? @relation(fields: [companyId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id])
 
   @@index([saleId])
   @@index([productId])
@@ -158,14 +158,6 @@ model Company {
   expenses      Expense[]
 }
 
-model CompanySettings {
-  id            String   @id
-  name          String
-  logo          String?  // Base64 string
-  copyrightText String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
 
 enum Role {
   OWNER
