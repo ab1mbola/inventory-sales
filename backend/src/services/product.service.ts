@@ -25,7 +25,7 @@ export class ProductService {
         FROM "Product" p
         LEFT JOIN "Category" c ON p."categoryId" = c.id
         WHERE p."stockLevel" <= p."minStock"
-        AND p."companyId" = (SELECT "id" FROM "Company" WHERE "id" = p."companyId") -- illustrative safety
+        AND p."companyId" = ${this.db.$tenantId}
         ORDER BY p."stockLevel" ASC
       `;
     }
