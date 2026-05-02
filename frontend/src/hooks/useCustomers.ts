@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '../services/api';
+import { customerService } from '../services/customerService';
 import type { Customer } from '../types';
 
 export function useCustomers() {
@@ -7,21 +7,21 @@ export function useCustomers() {
 
   const query = useQuery<Customer[]>({
     queryKey: ['customers'],
-    queryFn: () => api.get('/customers').then((res) => res.data),
+    queryFn: () => customerService.getAll(),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: Partial<Customer>) => api.post('/customers', data).then((res) => res.data),
+    mutationFn: (data: Partial<Customer>) => customerService.create(data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['customers'] }),
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, ...data }: Partial<Customer>) => api.put(`/customers/${id}`, data).then((res) => res.data),
+    mutationFn: ({ id, ...data }: Partial<Customer>) => customerService.update(id as string, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['customers'] }),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => api.delete(`/customers/${id}`).then((res) => res.data),
+    mutationFn: (id: string) => customerService.delete(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['customers'] }),
   });
 

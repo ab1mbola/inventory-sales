@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
-import { prisma } from '../utils/prisma';
+import { Response } from 'express';
+import { AuthenticatedRequest } from '../middleware/authMiddleware';
 
-export const getCategories = async (_req: Request, res: Response) => {
+export const getCategories = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const categories = await prisma.category.findMany({
+    const categories = await req.db.category.findMany({
       orderBy: { name: 'asc' },
     });
     res.json(categories);
@@ -12,14 +12,18 @@ export const getCategories = async (_req: Request, res: Response) => {
   }
 };
 
-export const createCategory = async (req: Request, res: Response) => {
+export const createCategory = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { name, description } = req.body;
     if (!name) {
       return res.status(400).json({ error: 'Category name is required' });
     }
-    const category = await prisma.category.create({
-      data: { name, description },
+    const category = await req.db.category.create({
+      data: { 
+        name, 
+        description,
+        companyId: req.user!.companyId
+      },
     });
     res.status(201).json(category);
   } catch (error: any) {
@@ -30,11 +34,11 @@ export const createCategory = async (req: Request, res: Response) => {
   }
 };
 
-export const updateCategory = async (req: Request, res: Response) => {
+export const updateCategory = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = req.params.id as string;
     const { name, description } = req.body;
-    const category = await prisma.category.update({
+    const category = await req.db.category.update({
       where: { id },
       data: { name, description },
     });
@@ -50,10 +54,10 @@ export const updateCategory = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteCategory = async (req: Request, res: Response) => {
+export const deleteCategory = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = req.params.id as string;
-    await prisma.category.delete({ where: { id } });
+    await req.db.category.delete({ where: { id } });
     res.status(204).send();
   } catch (error: any) {
     if (error?.code === 'P2025') {

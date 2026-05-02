@@ -1,14 +1,14 @@
-import { Request, Response } from 'express';
-import { prisma } from '../utils/prisma';
-import { startOfMonth, endOfMonth, subMonths, format, startOfYear } from 'date-fns';
+import { Response } from 'express';
+import { startOfMonth, subMonths, format } from 'date-fns';
+import { AuthenticatedRequest } from '../middleware/authMiddleware';
 
-export const getReportStats = async (req: Request, res: Response) => {
+export const getReportStats = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const now = new Date();
     const sixMonthsAgo = startOfMonth(subMonths(now, 5));
 
     // 1. Monthly Revenue & Profit (Last 6 Months)
-    const sales = await prisma.sale.findMany({
+    const sales = await req.db.sale.findMany({
       where: {
         createdAt: { gte: sixMonthsAgo }
       },
@@ -33,7 +33,7 @@ export const getReportStats = async (req: Request, res: Response) => {
     const monthlyPerformance = Array.from(monthlyDataMap.values());
 
     // 2. Sales by Category
-    const categorySalesRaw = await prisma.saleItem.findMany({
+    const categorySalesRaw = await req.db.saleItem.findMany({
       include: {
         product: {
           include: { category: true }
@@ -51,7 +51,7 @@ export const getReportStats = async (req: Request, res: Response) => {
     const categoryDistribution = Array.from(categoryMap.entries()).map(([name, value]) => ({ name, value }));
 
     // 3. Payment Method Distribution
-    const paymentDistributionRaw = await prisma.sale.groupBy({
+    const paymentDistributionRaw = await req.db.sale.groupBy({
       by: ['paymentMethod'],
       _count: { id: true },
       _sum: { totalAmount: true }
@@ -64,7 +64,7 @@ export const getReportStats = async (req: Request, res: Response) => {
     }));
 
     // 4. Inventory Value
-    const products = await prisma.product.findMany();
+    const products = await req.db.product.findMany();
     const inventoryStats = {
       totalItems: products.reduce((acc: number, p: any) => acc + p.stockLevel, 0),
       totalValue: products.reduce((acc: number, p: any) => acc + (Number(p.price) * p.stockLevel), 0),

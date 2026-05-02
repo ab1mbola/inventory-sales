@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
-import { prisma } from '../utils/prisma';
+import { Response } from 'express';
+import { AuthenticatedRequest } from '../middleware/authMiddleware';
 
-export const getDebtors = async (req: Request, res: Response) => {
+export const getDebtors = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const customers = await prisma.customer.findMany({
+    const customers = await req.db.customer.findMany({
       include: {
         sales: {
           where: {
@@ -38,10 +38,10 @@ export const getDebtors = async (req: Request, res: Response) => {
   }
 };
 
-export const getCustomerDebtDetails = async (req: Request, res: Response) => {
+export const getCustomerDebtDetails = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = req.params.id as string;
-    const customer = await prisma.customer.findUnique({
+    const customer = await req.db.customer.findUnique({
       where: { id },
       include: {
         sales: {
@@ -62,7 +62,7 @@ export const getCustomerDebtDetails = async (req: Request, res: Response) => {
   }
 };
 
-export const recordPayment = async (req: Request, res: Response) => {
+export const recordPayment = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { customerId, amount, method, note } = req.body;
 
@@ -70,12 +70,13 @@ export const recordPayment = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Customer ID and amount are required' });
     }
 
-    const payment = await prisma.customerPayment.create({
+    const payment = await req.db.customerPayment.create({
       data: {
         customerId,
         amount: Number(amount),
         method: method || 'CASH',
         note: note || '',
+        companyId: req.user!.companyId
       }
     });
 

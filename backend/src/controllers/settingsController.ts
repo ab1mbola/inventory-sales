@@ -1,20 +1,20 @@
-import { Request, Response } from 'express';
-import { prisma } from '../utils/prisma';
+import { Response } from 'express';
+import { internal_unscoped_prisma as prisma } from '../db/client';
 import bcrypt from 'bcryptjs';
-
-const SINGLETON_ID = 'singleton';
+import { AuthenticatedRequest } from '../middleware/authMiddleware';
 
 // Profile Settings
-export const updateProfile = async (req: any, res: Response) => {
+export const updateProfile = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { name, email } = req.body;
-    const userId = req.user.userId;
+    const userId = req.user!.id;
 
     if (!name || !email) {
       return res.status(400).json({ error: 'Name and email are required' });
     }
 
-    const updatedUser = await prisma.user.update({
+    // req.db.user.update is already scoped by req.db extension
+    const updatedUser = await req.db.user.update({
       where: { id: userId },
       data: { name, email },
       select: { id: true, name: true, email: true, role: true },
@@ -30,23 +30,24 @@ export const updateProfile = async (req: any, res: Response) => {
   }
 };
 
-export const changePassword = async (req: any, res: Response) => {
+export const changePassword = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { oldPassword, newPassword } = req.body;
-    const userId = req.user.userId;
+    const userId = req.user!.id;
 
     if (!oldPassword || !newPassword) {
       return res.status(400).json({ error: 'Old and new passwords are required' });
     }
 
-    const user = await prisma.user.findUnique({ where: { id: userId } });
+    // findUnique is scoped by req.db
+    const user = await req.db.user.findUnique({ where: { id: userId } });
     if (!user) return res.status(404).json({ error: 'User not found' });
 
     const isValid = await bcrypt.compare(oldPassword, user.password);
     if (!isValid) return res.status(401).json({ error: 'Invalid old password' });
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await prisma.user.update({
+    await req.db.user.update({
       where: { id: userId },
       data: { password: hashedPassword },
     });
@@ -59,32 +60,31 @@ export const changePassword = async (req: any, res: Response) => {
 };
 
 // Company Settings
-export const getCompanySettings = async (req: Request, res: Response) => {
+export const getCompanySettings = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    let settings = await prisma.companySettings.findUnique({
-      where: { id: SINGLETON_ID },
+    const companyId = req.user!.companyId;
+
+    // Company is NOT currently scoped by the factory extension because it lacks a 'companyId' field
+    // We query it by its 'id' which is the companyId from the token.
+    const company = await prisma.company.findUnique({
+      where: { id: companyId },
     });
 
-    if (!settings) {
-      // Create default settings if they don't exist
-      settings = await prisma.companySettings.create({
-        data: {
-          id: SINGLETON_ID,
-          name: 'Inventory Management System',
-        },
-      });
+    if (!company) {
+      return res.status(404).json({ error: 'Organization not found' });
     }
 
-    res.json(settings);
+    res.json(company);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to fetch company settings' });
   }
 };
 
-export const updateCompanySettings = async (req: Request, res: Response) => {
+export const updateCompanySettings = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { name, logo, copyrightText } = req.body;
+    const companyId = req.user!.companyId;
 
     if (!name) {
       return res.status(400).json({ error: 'Company name is required' });
@@ -92,7 +92,6 @@ export const updateCompanySettings = async (req: Request, res: Response) => {
 
     // Logo validation
     if (logo) {
-      // Basic check for base64 and size
       const sizeInBytes = (logo.length * 3) / 4;
       const maxSize = 1024 * 1024; // 1MB
 
@@ -103,17 +102,16 @@ export const updateCompanySettings = async (req: Request, res: Response) => {
       const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
       const match = logo.match(/^data:(image\/[a-z+]+);base64,/);
       if (!match || !allowedTypes.includes(match[1])) {
-        return res.status(400).json({ error: 'Invalid logo format. Only PNG, JPG, JPEG, and SVG are allowed.' });
+        return res.status(400).json({ error: 'Invalid logo format.' });
       }
     }
 
-    const settings = await prisma.companySettings.upsert({
-      where: { id: SINGLETON_ID },
-      update: { name, logo, copyrightText },
-      create: { id: SINGLETON_ID, name, logo, copyrightText },
+    const company = await prisma.company.update({
+      where: { id: companyId },
+      data: { name, logo, copyrightText },
     });
 
-    res.json(settings);
+    res.json(company);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to update company settings' });

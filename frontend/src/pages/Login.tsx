@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { api } from '../services/api';
 import { Package, ArrowRight, Loader2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -102,8 +102,14 @@ export default function Login() {
           </button>
         </form>
 
+        <div className="mt-12 text-center">
+          <p className="text-[10px] text-muted uppercase tracking-widest font-bold">
+            New Organization? <Link to="/register" className="text-accent hover:underline ml-2">Enroll Now</Link>
+          </p>
+        </div>
+
         {/* Footer */}
-        <div className="mt-20 flex justify-between items-center opacity-40">
+        <div className="mt-16 flex justify-between items-center opacity-40">
            <div className="h-px bg-black flex-1 mr-4" />
            <p className="text-[9px] font-bold uppercase tracking-widest whitespace-nowrap">
              Inventory System — 2026

@@ -1,41 +1,11 @@
-import { Request, Response } from 'express';
-import { prisma } from '../utils/prisma';
+import { Response } from 'express';
+import { AuthenticatedRequest } from '../middleware/authMiddleware';
+import { ProductService } from '../services/product.service';
 
-export const getProducts = async (req: Request, res: Response) => {
+export const getProducts = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { search, categoryId, lowStock } = req.query;
-
-    const where: any = {};
-
-    if (search) {
-      where.OR = [
-        { name: { contains: search as string, mode: 'insensitive' } },
-        { sku: { contains: search as string, mode: 'insensitive' } },
-      ];
-    }
-
-    if (categoryId) {
-      where.categoryId = categoryId as string;
-    }
-
-    if (lowStock === 'true') {
-      where.stockLevel = { lte: prisma.product.fields?.minStock ?? 10 };
-      // Use raw filter for column comparison
-      const products = await prisma.$queryRaw`
-        SELECT p.*, c.name as "categoryName"
-        FROM "Product" p
-        LEFT JOIN "Category" c ON p."categoryId" = c.id
-        WHERE p."stockLevel" <= p."minStock"
-        ORDER BY p."stockLevel" ASC
-      `;
-      return res.json(products);
-    }
-
-    const products = await prisma.product.findMany({
-      where,
-      include: { category: true },
-      orderBy: { updatedAt: 'desc' },
-    });
+    const service = new ProductService(req.db);
+    const products = await service.getAllProducts(req.query);
     res.json(products);
   } catch (error) {
     console.error(error);
@@ -43,15 +13,12 @@ export const getProducts = async (req: Request, res: Response) => {
   }
 };
 
-export const getProductById = async (req: Request, res: Response) => {
+export const getProductById = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const id = req.params.id as string;
-    const product = await prisma.product.findUnique({
-      where: { id },
-      include: { category: true },
-    });
+    const service = new ProductService(req.db);
+    const product = await service.getProductById(req.params.id as string);
     if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
+      return res.status(404).json({ error: 'Product not found or access denied' });
     }
     res.json(product);
   } catch (error) {
@@ -59,7 +26,7 @@ export const getProductById = async (req: Request, res: Response) => {
   }
 };
 
-export const createProduct = async (req: Request, res: Response) => {
+export const createProduct = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { sku, name, description, price, cost, stockLevel, minStock, categoryId } = req.body;
 
@@ -67,60 +34,48 @@ export const createProduct = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'sku, name, price, and cost are required' });
     }
 
-    const product = await prisma.product.create({
-      data: {
-        sku,
-        name,
-        description,
-        price,
-        cost,
-        stockLevel: stockLevel ?? 0,
-        minStock: minStock ?? 10,
-        categoryId,
-      },
-      include: { category: true },
+    const service = new ProductService(req.db);
+    const product = await service.createProduct({
+      sku, name, description, price, cost, 
+      stockLevel: stockLevel ?? 0, 
+      minStock: minStock ?? 10, 
+      categoryId 
     });
     res.status(201).json(product);
   } catch (error: any) {
     if (error?.code === 'P2002') {
-      return res.status(409).json({ error: 'A product with this SKU already exists' });
+      return res.status(409).json({ error: 'A product with this SKU already exists in your company' });
     }
     console.error(error);
     res.status(500).json({ error: 'Failed to create product' });
   }
 };
 
-export const updateProduct = async (req: Request, res: Response) => {
+export const updateProduct = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const id = req.params.id as string;
-    const { sku, name, description, price, cost, stockLevel, minStock, categoryId } = req.body;
-
-    const product = await prisma.product.update({
-      where: { id },
-      data: { sku, name, description, price, cost, stockLevel, minStock, categoryId },
-      include: { category: true },
-    });
+    const service = new ProductService(req.db);
+    const product = await service.updateProduct(req.params.id as string, req.body);
     res.json(product);
   } catch (error: any) {
     if (error?.code === 'P2025') {
-      return res.status(404).json({ error: 'Product not found' });
+      return res.status(404).json({ error: 'Product not found or access denied' });
     }
     if (error?.code === 'P2002') {
-      return res.status(409).json({ error: 'A product with this SKU already exists' });
+      return res.status(409).json({ error: 'A product with this SKU already exists in your company' });
     }
     console.error(error);
     res.status(500).json({ error: 'Failed to update product' });
   }
 };
 
-export const deleteProduct = async (req: Request, res: Response) => {
+export const deleteProduct = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const id = req.params.id as string;
-    await prisma.product.delete({ where: { id } });
+    const service = new ProductService(req.db);
+    await service.deleteProduct(req.params.id as string);
     res.status(204).send();
   } catch (error: any) {
     if (error?.code === 'P2025') {
-      return res.status(404).json({ error: 'Product not found' });
+      return res.status(404).json({ error: 'Product not found or access denied' });
     }
     console.error(error);
     res.status(500).json({ error: 'Failed to delete product' });

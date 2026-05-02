@@ -1,48 +1,70 @@
 import { Request, Response } from 'express';
-import { prisma } from '../utils/prisma';
+import { internal_unscoped_prisma as prisma } from '../db/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { AuthenticatedRequest } from '../middleware/authMiddleware';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-change-me';
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { email, password, name, role } = req.body;
+    const { email, password, name, companyName } = req.body;
+    console.log(`Registration attempt for: ${email}`);
 
-    if (!email || !password || !name) {
-      return res.status(400).json({ error: 'Missing required fields' });
+    if (!email || !password || !name || !companyName) {
+      return res.status(400).json({ error: 'Missing required fields (email, password, name, companyName)' });
     }
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
+      console.log(`User already exists: ${email}`);
       return res.status(400).json({ error: 'User already exists' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('Password hashed. Starting transaction...');
 
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        name,
-        role: role || 'STAFF',
-      },
+    // Atomic transaction to create company and owner
+    const result = await prisma.$transaction(async (tx) => {
+      console.log('Creating company...');
+      const company = await tx.company.create({
+        data: { name: companyName }
+      });
+
+      console.log(`Company created: ${company.id}. Creating user...`);
+      const user = await tx.user.create({
+        data: {
+          email,
+          password: hashedPassword,
+          name,
+          role: 'OWNER',
+          companyId: company.id
+        }
+      });
+
+      return { user, company };
     });
 
-    const token = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+    console.log(`Registration successful for: ${email}`);
+    const token = jwt.sign(
+      { userId: result.user.id, companyId: result.company.id, role: result.user.role }, 
+      JWT_SECRET, 
+      { expiresIn: '7d' }
+    );
 
     res.json({
       token,
       user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
+        id: result.user.id,
+        email: result.user.email,
+        name: result.user.name,
+        role: result.user.role,
+        companyId: result.company.id
       },
     });
   } catch (error) {
-    console.error('Registration Error:', error);
-    res.status(500).json({ error: 'Failed to register user' });
+    console.error('Registration Error Details:', error);
+    res.status(500).json({ error: 'Failed to register user and company' });
   }
 };
 
@@ -60,7 +82,11 @@ export const login = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign(
+      { userId: user.id, companyId: user.companyId, role: user.role }, 
+      JWT_SECRET, 
+      { expiresIn: '7d' }
+    );
 
     res.json({
       token,
@@ -69,6 +95,7 @@ export const login = async (req: Request, res: Response) => {
         email: user.email,
         name: user.name,
         role: user.role,
+        companyId: user.companyId
       },
     });
   } catch (error: any) {
@@ -77,11 +104,11 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-export const me = async (req: any, res: Response) => {
+export const me = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.user.userId },
-      select: { id: true, email: true, name: true, role: true }
+    const user = await req.db.user.findUnique({
+      where: { id: req.user!.id },
+      select: { id: true, email: true, name: true, role: true, companyId: true }
     });
 
     if (!user) {

@@ -11,6 +11,7 @@ import Customers from './pages/Customers';
 import Debt from './pages/Debt';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
+import Register from './pages/Register';
 
 import FullPageLoader from './components/FullPageLoader';
 
@@ -53,6 +54,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="*" element={<ProtectedLayout />} />
         </Routes>
       </BrowserRouter>

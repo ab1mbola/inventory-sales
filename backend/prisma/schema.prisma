@@ -12,23 +12,29 @@ model User {
   password  String
   name      String
   role      Role     @default(STAFF)
+  companyId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id])
   sales     Sale[]
 }
 
 model Category {
   id          String    @id @default(uuid())
-  name        String    @unique
+  name        String
   description String?
+  companyId   String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  company     Company   @relation(fields: [companyId], references: [id])
   products    Product[]
+
+  @@unique([companyId, name])
 }
 
 model Product {
   id          String     @id @default(uuid())
-  sku         String     @unique
+  sku         String
   name        String
   description String?
   price       Decimal    @db.Decimal(10, 2)
@@ -36,11 +42,14 @@ model Product {
   stockLevel  Int        @default(0)
   minStock    Int        @default(10)
   categoryId  String?
+  companyId   String
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   category    Category?  @relation(fields: [categoryId], references: [id])
+  company     Company    @relation(fields: [companyId], references: [id])
   saleItems   SaleItem[]
 
+  @@unique([companyId, sku])
   @@index([sku])
   @@index([categoryId])
 }
@@ -49,14 +58,17 @@ model Customer {
   id          String   @id @default(uuid())
   name        String
   email       String?
-  phone       String?  @unique
+  phone       String?
   address     String?
   creditLimit Decimal? @db.Decimal(10, 2)
+  companyId   String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  company     Company  @relation(fields: [companyId], references: [id])
   sales       Sale[]
   payments    CustomerPayment[]
 
+  @@unique([companyId, phone])
   @@index([phone])
 }
 
@@ -66,9 +78,11 @@ model CustomerPayment {
   amount      Decimal     @db.Decimal(10, 2)
   method      PaymentType @default(CASH)
   note        String?
+  companyId   String
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   customer    Customer    @relation(fields: [customerId], references: [id])
+  company     Company     @relation(fields: [companyId], references: [id])
 
   @@index([customerId])
 }
@@ -80,6 +94,7 @@ model Sale {
   paymentMethod  PaymentType
   status         SaleStatus  @default(COMPLETED)
   userId         String?
+  companyId      String
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
   amountReceived Decimal?    @db.Decimal(10, 2)
@@ -89,6 +104,7 @@ model Sale {
   customerId     String?
   customer       Customer?   @relation(fields: [customerId], references: [id])
   user           User?       @relation(fields: [userId], references: [id])
+  company        Company     @relation(fields: [companyId], references: [id])
   items          SaleItem[]
 
   @@index([createdAt])
@@ -99,14 +115,17 @@ model SaleItem {
   id        String  @id @default(uuid())
   saleId    String
   productId String
+  companyId String
   quantity  Int
   price     Decimal @db.Decimal(10, 2)
   cost      Decimal @db.Decimal(10, 2)
   product   Product @relation(fields: [productId], references: [id])
   sale      Sale    @relation(fields: [saleId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id])
 
   @@index([saleId])
   @@index([productId])
+  @@index([companyId])
 }
 
 model Expense {
@@ -114,20 +133,31 @@ model Expense {
   description String
   amount      Decimal  @db.Decimal(10, 2)
   date        DateTime @default(now())
+  companyId   String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  company     Company  @relation(fields: [companyId], references: [id])
 
   @@index([date])
 }
 
-model CompanySettings {
-  id            String   @id
+model Company {
+  id            String    @id @default(uuid())
   name          String
-  logo          String?  // Base64 string
+  logo          String?   // Base64 string
   copyrightText String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  users         User[]
+  categories    Category[]
+  products      Product[]
+  customers     Customer[]
+  payments      CustomerPayment[]
+  sales         Sale[]
+  saleItems     SaleItem[]
+  expenses      Expense[]
 }
+
 
 enum Role {
   OWNER

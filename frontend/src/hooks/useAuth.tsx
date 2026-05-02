@@ -6,6 +6,7 @@ interface User {
   email: string;
   name: string;
   role: 'OWNER' | 'MANAGER' | 'STAFF';
+  companyId: string;
 }
 
 interface AuthContextType {
@@ -27,12 +28,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const initAuth = async () => {
       const savedToken = localStorage.getItem('token');
       if (savedToken) {
-        api.defaults.headers.common['Authorization'] = `Bearer ${savedToken}`;
         try {
           const res = await api.get('/auth/me');
           setUser(res.data);
         } catch (error) {
-          console.error('Session expired');
+          console.error('Session expired or invalid');
           logout();
         }
       }
@@ -43,14 +43,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = (newToken: string, newUser: User) => {
     localStorage.setItem('token', newToken);
-    api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
     setToken(newToken);
     setUser(newUser);
   };
 
   const logout = () => {
     localStorage.removeItem('token');
-    delete api.defaults.headers.common['Authorization'];
     setToken(null);
     setUser(null);
   };
