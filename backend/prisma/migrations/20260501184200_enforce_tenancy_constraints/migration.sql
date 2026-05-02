@@ -1,23 +1,23 @@
 -- DropForeignKey
-ALTER TABLE "Category" DROP CONSTRAINT "Category_companyId_fkey";
+ALTER TABLE "Category" DROP CONSTRAINT IF EXISTS "Category_companyId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "Customer" DROP CONSTRAINT "Customer_companyId_fkey";
+ALTER TABLE "Customer" DROP CONSTRAINT IF EXISTS "Customer_companyId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "CustomerPayment" DROP CONSTRAINT "CustomerPayment_companyId_fkey";
+ALTER TABLE "CustomerPayment" DROP CONSTRAINT IF EXISTS "CustomerPayment_companyId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "Expense" DROP CONSTRAINT "Expense_companyId_fkey";
+ALTER TABLE "Expense" DROP CONSTRAINT IF EXISTS "Expense_companyId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "Product" DROP CONSTRAINT "Product_companyId_fkey";
+ALTER TABLE "Product" DROP CONSTRAINT IF EXISTS "Product_companyId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "Sale" DROP CONSTRAINT "Sale_companyId_fkey";
+ALTER TABLE "Sale" DROP CONSTRAINT IF EXISTS "Sale_companyId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "User" DROP CONSTRAINT "User_companyId_fkey";
+ALTER TABLE "User" DROP CONSTRAINT IF EXISTS "User_companyId_fkey";
 
 -- DropIndex
 DROP INDEX "Category_name_key";
