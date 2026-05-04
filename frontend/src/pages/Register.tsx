@@ -29,7 +29,11 @@ export default function Register() {
       login(res.data.token, res.data.user);
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Registration Failed.');
+      const errorData = err.response?.data?.error;
+      const errorMessage = typeof errorData === 'string' 
+        ? errorData 
+        : errorData?.message || errorData?.code || err.response?.data?.message || 'Registration Failed.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +61,7 @@ export default function Register() {
         <form onSubmit={handleSubmit} className="space-y-8">
           {error && (
             <div className="border border-red-500 text-red-500 p-4 text-[10px] font-bold uppercase tracking-widest animate-in fade-in slide-in-from-top-2 duration-300">
-              Error: {error}
+              Error: {typeof error === 'string' ? error : JSON.stringify(error)}
             </div>
           )}
 

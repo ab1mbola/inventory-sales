@@ -5,17 +5,21 @@ import { PrismaPg } from '@prisma/adapter-pg';
 // Bypasses SSL certificate validation errors
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-const connectionString = process.env.DB_ENV === 'prod' 
-  ? process.env.DATABASE_URL_PROD 
-  : process.env.DATABASE_URL_DEV;
+const connectionString = process.env.DATABASE_URL || (
+  process.env.DB_ENV === 'prod' 
+    ? process.env.DATABASE_URL_PROD 
+    : process.env.DATABASE_URL_DEV
+);
 
 if (!connectionString) {
-  console.error(`Error: DATABASE_URL_${process.env.DB_ENV?.toUpperCase() || 'DEV'} is missing in .env`);
-  process.exit(1);
+  console.error('CRITICAL ERROR: No database connection string found.');
+  console.error('Expected one of: DATABASE_URL, DATABASE_URL_PROD, or DATABASE_URL_DEV');
+  // We don't process.exit(1) here to allow the server to start (for health checks)
+  // but subsequent DB calls will fail with a clear error.
 }
 
 const pool = new Pool({ 
-  connectionString,
+  connectionString: connectionString || '',
   ssl: { rejectUnauthorized: false },
   max: 10,
   idleTimeoutMillis: 30000,
