@@ -49,6 +49,16 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Inventory API is running' });
 });
 
+// Global Error Handler
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('UNHANDLED ERROR:', err);
+  res.status(err.status || 500).json({
+    error: 'Internal Server Error',
+    message: err.message || 'An unexpected error occurred',
+    details: process.env.NODE_ENV === 'development' ? err : undefined
+  });
+});
+
 app.listen(Number(port), '0.0.0.0', () => {
   console.log(`Server is running on port ${port} (Network Accessible)`);
 });
