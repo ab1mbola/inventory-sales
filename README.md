@@ -4,13 +4,14 @@ A comprehensive full-stack solution for managing inventory, tracking sales, and 
 
 ## 🚀 Features
 
+- **Multi-Tenant SaaS**: Secure data isolation with support for multiple companies.
 - **Dashboard**: Real-time business overview with dynamic charts (ApexCharts).
 - **POS (Point of Sale)**: Streamlined interface for making sales, managing carts, and processing payments.
 - **Inventory Management**: Full CRUD operations for products and categories.
 - **Customer Tracking**: Manage customer relationships and track purchasing history.
 - **Debt Management**: Monitor credit sales and manage debtor records.
 - **Comprehensive Reports**: Detailed analytics on sales performance and inventory trends.
-- **Secure Authentication**: JWT-based authentication for both frontend and backend.
+- **Secure Authentication**: JWT-based authentication with company-scoped access.
 
 ---
 
@@ -29,8 +30,9 @@ A comprehensive full-stack solution for managing inventory, tracking sales, and 
 - **Framework**: Express 5
 - **Language**: TypeScript
 - **ORM**: Prisma 7
-- **Database**: PostgreSQL (Supabase compatible)
-- **Authentication**: JSON Web Token (JWT) + Bcryptjs
+- **Database**: PostgreSQL (Supabase)
+- **Infrastructure**: Supabase (Auth, Storage, Database)
+- **Authentication**: JWT + Bcryptjs
 
 ---
 
@@ -57,7 +59,9 @@ A comprehensive full-stack solution for managing inventory, tracking sales, and 
    - Create a `.env` file in the `backend` directory based on `.env.example`:
      ```env
      PORT=3001
-     DATABASE_URL="your-postgresql-url"
+     DB_ENV=dev # Use 'dev' or 'prod'
+     DATABASE_URL_DEV="your-supabase-dev-url"
+     DATABASE_URL_PROD="your-supabase-prod-url"
      JWT_SECRET="your-secret-key"
      ```
    - Initialize the database:
@@ -118,6 +122,16 @@ The application should now be running!
 │   │   ├── store/       # Zustand state management
 │   │   └── types/       # TypeScript definitions
 ```
+
+---
+
+## 🔐 Multi-tenancy & Data Isolation
+
+This system is built with a strict multi-tenant architecture. 
+
+- **Company Scoping**: Every record (Users, Products, Sales, Customers) is associated with a `companyId`.
+- **Data Security**: Middleware ensures that users can only access and modify data belonging to their own company.
+- **Multi-Company Support**: A single database instance can securely host data for multiple independent businesses.
 
 ---
 
