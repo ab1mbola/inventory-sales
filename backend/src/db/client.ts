@@ -5,11 +5,11 @@ import { PrismaPg } from '@prisma/adapter-pg';
 // Bypasses SSL certificate validation errors
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-const connectionString = process.env.DATABASE_URL || (
-  process.env.DB_ENV === 'prod' 
-    ? process.env.DATABASE_URL_PROD 
-    : process.env.DATABASE_URL_DEV
-);
+const connectionString = 
+  process.env.DATABASE_URL || 
+  (process.env.DB_ENV === 'prod' ? process.env.DATABASE_URL_PROD : process.env.DATABASE_URL_DEV) ||
+  process.env.DATABASE_URL_PROD ||
+  process.env.DATABASE_URL_DEV;
 
 if (!connectionString) {
   console.error('CRITICAL ERROR: No database connection string found.');
