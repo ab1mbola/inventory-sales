@@ -46,7 +46,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/settings', settingsRoutes);
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Inventory API is running' });
+  res.json({ status: 'ok', message: 'Mnemos API is running' });
 });
 
 // Global Error Handler

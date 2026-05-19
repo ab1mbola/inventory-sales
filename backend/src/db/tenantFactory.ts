@@ -28,7 +28,8 @@ export const createTenantDB = (companyId: string) => {
           if (operation === 'findUnique' || operation === 'findUniqueOrThrow') {
             const newOperation = operation === 'findUnique' ? 'findFirst' : 'findFirstOrThrow';
             extendedArgs.where = { ...extendedArgs.where, companyId };
-            return (internal_unscoped_prisma[model as any] as any)[newOperation](extendedArgs);
+            const prismaModelName = model.charAt(0).toLowerCase() + model.slice(1);
+            return (internal_unscoped_prisma[prismaModelName as any] as any)[newOperation](extendedArgs);
           }
 
           // 3. Enforce scoping for WRITE operations that use 'where'

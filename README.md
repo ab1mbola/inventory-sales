@@ -1,6 +1,12 @@
-# 📦 Inventory & Sales Management System
+# 🧠 Mnemos — Multi-Tenant Inventory & Sales Management
 
 A comprehensive full-stack solution for managing inventory, tracking sales, and monitoring business performance. Built with a modern tech stack focusing on performance, scalability, and ease of use.
+
+## Name origin
+The name **Mnemos** is inspired by *Mnemosyne* — the ancient Greek Titaness and personification of memory, reflecting the system's role as the secure, flawless, and eternal memory bank for all your business transactions.
+
+## Why Mnemos exists
+Mnemos was created to solve a common headache for multi-branch and multi-tenant small to medium retail businesses: keeping inventory and sales tracked securely in real-time, without complex setup or exorbitant SaaS costs, providing ultimate business clarity and peace of mind.
 
 ## 🚀 Features
 
@@ -47,8 +53,8 @@ A comprehensive full-stack solution for managing inventory, tracking sales, and 
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-repo/inventory-sales.git
-   cd inventory-sales
+   git clone https://github.com/your-repo/mnemos.git
+   cd mnemos
    ```
 
 2. **Backend Setup**:

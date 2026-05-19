@@ -89,7 +89,7 @@ export default function Customers() {
           className="craft-btn flex items-center justify-center gap-3 px-6 h-12 text-[10px]"
         >
           <UserPlus size={18} />
-          Register Entity
+          Add Customer
         </button>
       </div>
 
@@ -113,7 +113,7 @@ export default function Customers() {
 
       {/* Customers Grid */}
       {isLoading ? (
-        <FullPageLoader message="Fetching Client Data..." />
+        <FullPageLoader message="Loading Customers..." />
       ) : (
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -182,7 +182,7 @@ export default function Customers() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6 border-b border-border flex items-center justify-between bg-surface/50">
-              <h2 className="text-xl font-serif font-bold italic tracking-tight">{editingCustomer ? 'MODIFICATION' : 'NEW REGISTRATION'}</h2>
+              <h2 className="text-xl font-serif font-bold italic tracking-tight">{editingCustomer ? 'Edit Customer' : 'Add Customer'}</h2>
               <button onClick={() => setIsModalOpen(false)} className="text-muted hover:text-accent transition-colors cursor-pointer"><X size={20} /></button>
             </div>
             
@@ -252,13 +252,13 @@ export default function Customers() {
                   onClick={() => setIsModalOpen(false)}
                   className="flex-1 h-12 border border-border text-muted hover:text-primary hover:border-primary text-[10px] font-bold uppercase tracking-[0.3em] transition-all cursor-pointer"
                 >
-                  ABORT
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   className="flex-1 h-12 craft-btn text-[10px] cursor-pointer"
                 >
-                  {editingCustomer ? 'COMMIT UPDATES' : 'EXECUTE REGISTRATION'}
+                  {editingCustomer ? 'Save Changes' : 'Save Customer'}
                 </button>
               </div>
             </form>

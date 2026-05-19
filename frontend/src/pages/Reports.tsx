@@ -13,7 +13,7 @@ export default function Reports() {
   const { data, isLoading } = useReports();
 
   if (isLoading) {
-    return <FullPageLoader message="Analyzing Records..." />;
+    return <FullPageLoader message="Loading Reports..." />;
   }
 
 
@@ -119,7 +119,7 @@ export default function Reports() {
           className="craft-btn h-12 px-8 flex items-center gap-3 text-[10px] print:hidden"
         >
           <Download size={18} />
-          EXECUTE EXPORT
+          Print Report
         </button>
       </div>
 

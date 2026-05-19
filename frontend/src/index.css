@@ -6,12 +6,18 @@
   --font-serif: "Fraunces", serif;
   --font-sans: "Inter", system-ui, sans-serif;
   
-  --color-primary: #000000;
-  --color-accent: #E91E63;
-  --color-background: #FFFFFF;
-  --color-surface: #F9F9F9;
-  --color-muted: #666666;
-  --color-border: #E5E7EB;
+  /* Refined HSL Palette */
+  --color-primary: hsl(0, 0%, 0%);
+  --color-accent: hsl(340, 82%, 52%);
+  --color-accent-soft: hsl(340, 82%, 96%);
+  --color-background: hsl(0, 0%, 100%);
+  --color-surface: hsl(0, 0%, 98%);
+  --color-muted: hsl(0, 0%, 40%);
+  --color-border: hsl(0, 0%, 90%);
+  
+  /* Depth */
+  --shadow-premium: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+  --shadow-accent: 0 10px 30px -10px hsla(340, 82%, 52%, 0.2);
 }
 
 @layer base {
@@ -21,12 +27,14 @@
     background-color: var(--color-background);
     color: var(--color-primary);
     -webkit-font-smoothing: antialiased;
+    selection-background-color: var(--color-accent);
+    selection-color: white;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
     font-weight: 600;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
   }
 }
 
@@ -34,30 +42,66 @@
   .craft-card {
     background: var(--color-background);
     border: 1px solid var(--color-border);
-    border-radius: 0; /* Sharp corners like the aesthetic */
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .craft-card:hover {
-    border-color: var(--color-accent);
-    box-shadow: 0 10px 30px -10px rgba(233, 30, 99, 0.1);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-premium);
+    transform: translateY(-2px);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
   }
 
   .craft-btn {
+    position: relative;
     background: var(--color-primary);
     color: white;
-    padding: 0.75rem 1.5rem;
+    padding: 0.875rem 2rem;
     font-family: var(--font-sans);
-    font-weight: 500;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    transition: all 0.2s ease;
+    letter-spacing: 0.1em;
+    font-size: 0.65rem;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
     border: 1px solid var(--color-primary);
+    overflow: hidden;
   }
 
   .craft-btn:hover {
     background: var(--color-accent);
     border-color: var(--color-accent);
+    box-shadow: var(--shadow-accent);
+    transform: translateY(-1px);
+  }
+
+  .craft-btn:active {
+    transform: translateY(1px);
+  }
+
+  .input-premium {
+    width: 100%;
+    height: 3.5rem;
+    padding: 0 1.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+  }
+
+  .input-premium:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background: white;
+    box-shadow: 0 0 0 4px var(--color-accent-soft);
   }
 }
 
