@@ -2,6 +2,7 @@ import { internal_unscoped_prisma as prisma } from '../src/db/client';
 import * as bcrypt from 'bcryptjs';
 
 async function main() {
+  process.env.ALLOW_UNSAFE_GLOBAL_PRISMA = 'true';
   console.log('Seeding database...');
   
   // 1. Create default Company
