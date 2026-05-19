@@ -3,8 +3,10 @@ import { useProducts, useCreateProduct, useUpdateProduct, useDeleteProduct } fro
 import { useCategories } from '../hooks/useCategories';
 import type { Product, CreateProductPayload, Category } from '../types';
 import LoadingOverlay from '../components/LoadingOverlay';
-import { Search, Plus, X, Trash2, Edit3 } from 'lucide-react';
+import { Search, Plus, X, Trash2, Edit3, Package } from 'lucide-react';
 import FullPageLoader from '../components/FullPageLoader';
+import AnimatedPage from '../components/AnimatedPage';
+import { motion, AnimatePresence } from 'framer-motion';
 
 
 const emptyForm: CreateProductPayload = {
@@ -88,217 +90,265 @@ export default function Products() {
       p.sku.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (isLoading) return <FullPageLoader message="Indexing Inventory..." />;
+  if (isLoading) return <FullPageLoader message="Loading Products..." />;
 
   
   if (error) return (
-    <div className="p-12 text-center text-red-500 font-bold uppercase tracking-widest text-xs">
-      Error loading products.
+    <div className="p-20 text-center text-accent font-bold uppercase tracking-[0.5em] text-[10px] italic">
+      Error: Failed to load products.
     </div>
   );
 
   const isMutating = createProduct.isPending || updateProduct.isPending || deleteProduct.isPending;
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, x: -10 },
+    show: { opacity: 1, x: 0, transition: { ease: [0.23, 1, 0.32, 1] as const, duration: 0.5 } }
+  };
+
   return (
-    <div className="p-4 lg:p-8 space-y-8 max-w-[1600px] mx-auto bg-white">
+    <AnimatedPage className="p-4 lg:p-12 space-y-12 max-w-[1600px] mx-auto bg-white">
       {isMutating && <LoadingOverlay message={deleteProduct.isPending ? 'Deleting...' : editingId ? 'Updating...' : 'Creating...'} />}
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-black pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 border-b border-black pb-10">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-serif font-bold tracking-tighter uppercase leading-none">Products</h1>
-          <p className="text-[10px] text-muted mt-3 uppercase tracking-[0.3em] font-bold">Manage your inventory items</p>
+          <h1 className="text-3xl lg:text-4xl font-serif font-bold tracking-tighter uppercase leading-none italic">Products</h1>
+          <p className="text-[10px] text-muted mt-4 uppercase tracking-[0.4em] font-bold opacity-60 italic">Manage your inventory products</p>
         </div>
         <button
           onClick={() => { resetForm(); setShowForm(true); }}
-          className="craft-btn flex items-center gap-2 text-[10px] h-10 px-6"
+          className="craft-btn flex items-center gap-3 px-8"
         >
           <Plus size={16} />
-          Append Product
+          Add Product
         </button>
       </div>
 
       {/* Search & Stats */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-8 border border-black p-6">
-        <div className="relative w-full max-w-md group">
-          <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-accent transition-colors" size={16} />
+      <div className="flex flex-col md:flex-row justify-between items-center gap-12 border border-black p-8 bg-surface/30">
+        <div className="relative w-full max-w-xl group">
+          <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-accent transition-colors" size={18} strokeWidth={1} />
           <input
             type="text"
-            placeholder="SEARCH BY NAME OR SKU..."
+            placeholder="Search by name or SKU..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-8 pr-4 py-2 bg-transparent outline-none text-[10px] uppercase font-bold tracking-widest placeholder:text-muted/30"
+            className="w-full pl-10 pr-6 py-2 bg-transparent outline-none text-[10px] uppercase font-bold tracking-[0.2em] placeholder:opacity-20 focus:placeholder:opacity-0 transition-all"
           />
         </div>
-        <div className="flex gap-12">
+        <div className="flex gap-16">
           <div className="text-right">
-             <p className="text-[8px] text-muted uppercase tracking-[0.2em] font-bold">Total Items</p>
-             <p className="font-serif text-xl font-bold italic leading-none mt-1">{filtered?.length ?? 0}</p>
+             <p className="text-[9px] text-muted uppercase tracking-[0.3em] font-bold opacity-60">Total Products</p>
+             <p className="font-serif text-2xl font-bold italic leading-none mt-2">{filtered?.length ?? 0}</p>
+          </div>
+          <div className="text-right">
+             <p className="text-[9px] text-muted uppercase tracking-[0.3em] font-bold opacity-60">Status</p>
+             <div className="flex items-center gap-3 mt-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                <span className="text-[9px] uppercase font-bold tracking-widest italic">Online</span>
+             </div>
           </div>
         </div>
       </div>
 
       {/* Table */}
       <div className="craft-card overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto no-scrollbar">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-black">
-                <th className="px-6 py-3 text-[9px] font-bold text-muted uppercase tracking-[0.2em]">SKU</th>
-                <th className="px-6 py-3 text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Name</th>
-                <th className="px-6 py-3 text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Category</th>
-                <th className="px-6 py-3 text-right text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Price</th>
-                <th className="px-6 py-3 text-right text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Quantity</th>
-                <th className="px-6 py-3 text-center text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Actions</th>
+              <tr className="border-b border-black bg-surface/50">
+                <th className="px-8 py-5 text-[9px] font-bold text-muted uppercase tracking-[0.3em]">SKU</th>
+                <th className="px-8 py-5 text-[9px] font-bold text-muted uppercase tracking-[0.3em]">Name</th>
+                <th className="px-8 py-5 text-[9px] font-bold text-muted uppercase tracking-[0.3em]">Category</th>
+                <th className="px-8 py-5 text-right text-[9px] font-bold text-muted uppercase tracking-[0.3em]">Price</th>
+                <th className="px-8 py-5 text-right text-[9px] font-bold text-muted uppercase tracking-[0.3em]">Stock</th>
+                <th className="px-8 py-5 text-center text-[9px] font-bold text-muted uppercase tracking-[0.3em]">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <motion.tbody 
+              variants={container}
+              initial="hidden"
+              animate="show"
+              className="divide-y divide-border"
+            >
               {filtered && filtered.length > 0 ? (
                 filtered.map((product) => {
                   const isLowStock = product.stockLevel <= product.minStock;
                   return (
-                    <tr key={product.id} className="hover:bg-surface transition-colors group">
-                      <td className="px-6 py-4 whitespace-nowrap text-[10px] font-mono text-muted uppercase">{product.sku}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-[11px] font-bold uppercase tracking-tight group-hover:text-accent transition-colors">{product.name}</div>
-                        <div className="text-[9px] text-muted mt-1 uppercase tracking-tighter truncate max-w-xs">{product.description || 'No Description'}</div>
+                    <motion.tr key={product.id} variants={item} className="hover:bg-surface/50 transition-colors group">
+                      <td className="px-8 py-6 whitespace-nowrap text-[10px] font-mono text-muted/60 uppercase">{product.sku}</td>
+                      <td className="px-8 py-6 whitespace-nowrap">
+                        <div className="text-[11px] font-bold uppercase tracking-widest group-hover:text-accent transition-colors duration-500">{product.name}</div>
+                        <div className="text-[9px] text-muted mt-2 uppercase tracking-tight opacity-40 truncate max-w-xs">{product.description || 'No description'}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-[10px] font-bold uppercase tracking-widest bg-surface px-3 py-1 border border-border">{product.category?.name || 'Unclassified'}</span>
+                      <td className="px-8 py-6 whitespace-nowrap">
+                        <span className="text-[9px] font-bold uppercase tracking-[0.2em] bg-white border border-border px-4 py-1.5 shadow-sm">{product.category?.name || 'General'}</span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <div className="text-xs font-serif font-bold italic">₦{Number(product.price).toLocaleString()}</div>
-                        <div className="text-[9px] text-muted mt-1 uppercase tracking-tighter italic opacity-50">Cost: ₦{Number(product.cost).toLocaleString()}</div>
+                      <td className="px-8 py-6 whitespace-nowrap text-right">
+                        <div className="text-sm font-serif font-bold italic tracking-tight">₦{Number(product.price).toLocaleString()}</div>
+                        <div className="text-[9px] text-muted mt-2 uppercase tracking-tighter italic opacity-30">C: ₦{Number(product.cost).toLocaleString()}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <div className={`text-sm font-bold font-serif ${isLowStock ? 'text-accent' : 'text-primary'}`}>
+                      <td className="px-8 py-6 whitespace-nowrap text-right">
+                        <div className={`text-base font-bold font-serif italic ${isLowStock ? 'text-accent' : 'text-primary'}`}>
                           {product.stockLevel}
                         </div>
-                        {isLowStock && <div className="text-[8px] text-accent uppercase font-black tracking-widest mt-1">Critical</div>}
+                        {isLowStock && (
+                          <motion.div 
+                            animate={{ opacity: [0.3, 1, 0.3] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                            className="text-[8px] text-accent uppercase font-black tracking-widest mt-2"
+                          >
+                            Low Stock
+                          </motion.div>
+                        )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <div className="flex items-center justify-center gap-6">
+                      <td className="px-8 py-6 whitespace-nowrap text-center">
+                        <div className="flex items-center justify-center gap-8">
                           <button onClick={() => handleEdit(product)}
-                            className="text-primary hover:text-accent transition-colors cursor-pointer">
-                            <Edit3 size={16} />
+                            className="text-primary hover:text-accent transition-all duration-300 transform hover:scale-110 cursor-pointer">
+                            <Edit3 size={16} strokeWidth={1} />
                           </button>
                           <button onClick={() => handleDelete(product.id)}
-                            className="text-primary hover:text-red-600 transition-colors cursor-pointer">
-                            <Trash2 size={16} />
+                            className="text-primary hover:text-red-500 transition-all duration-300 transform hover:scale-110 cursor-pointer">
+                            <Trash2 size={16} strokeWidth={1} />
                           </button>
                         </div>
                       </td>
-                    </tr>
+                    </motion.tr>
                   );
                 })
               ) : (
-                <tr>
-                  <td colSpan={6} className="px-8 py-20 text-center">
-                    <p className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30 italic text-muted">No products found</p>
+                <motion.tr variants={item}>
+                  <td colSpan={6} className="px-8 py-24 text-center">
+                    <div className="flex flex-col items-center gap-6 opacity-20">
+                      <Package size={40} strokeWidth={0.5} />
+                      <p className="text-[10px] uppercase tracking-[0.5em] font-bold italic">No products found</p>
+                    </div>
                   </td>
-                </tr>
+                </motion.tr>
               )}
-            </tbody>
+            </motion.tbody>
           </table>
         </div>
       </div>
 
       {/* Form Modal */}
-      {showForm && (
-        <div 
-          className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-start justify-center z-[100] p-4 lg:p-12 overflow-y-auto no-scrollbar"
-          onClick={resetForm}
-        >
-          <div 
-            className="bg-white border border-black w-full max-w-2xl my-auto animate-in zoom-in-95 duration-300"
-            onClick={(e) => e.stopPropagation()}
+      <AnimatePresence>
+        {showForm && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/90 backdrop-blur-xl flex items-start justify-center z-[100] p-4 lg:p-12 overflow-y-auto no-scrollbar"
+            onClick={resetForm}
           >
-            <div className="p-6 border-b border-black flex justify-between items-end bg-surface">
-              <div>
-                <h2 className="text-2xl font-serif font-bold italic leading-none">
-                  {editingId ? 'Edit Product' : 'Add New Product'}
-                </h2>
-                <p className="text-[9px] text-muted mt-2 uppercase tracking-[0.3em] font-bold">Enter product details below</p>
-              </div>
-              <button onClick={resetForm} className="text-muted hover:text-accent transition-colors mb-2">
-                <X size={20} />
-              </button>
-            </div>
-            
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">SKU *</label>
-                  <input name="sku" value={form.sku} onChange={handleChange} required
-                    className="w-full px-4 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider uppercase font-bold" />
+            <motion.div 
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="bg-white border border-black w-full max-w-3xl my-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-10 border-b border-black flex justify-between items-end bg-surface/50">
+                <div>
+                  <h2 className="text-3xl font-serif font-bold italic tracking-tighter uppercase">
+                    {editingId ? 'Edit Product' : 'Add Product'}
+                  </h2>
+                  <p className="text-[10px] text-muted mt-4 uppercase tracking-[0.4em] font-bold opacity-60">Update product details</p>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Product Name *</label>
-                  <input name="name" value={form.name} onChange={handleChange} required
-                    className="w-full px-4 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider uppercase font-bold" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Description</label>
-                <textarea name="description" value={form.description} onChange={handleChange} rows={2}
-                  className="w-full px-4 py-4 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Selling Price *</label>
-                  <input name="price" type="number" step="0.01" value={form.price} onChange={handleChange} required
-                    className="w-full px-4 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider font-serif italic" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Cost Price *</label>
-                  <input name="cost" type="number" step="0.01" value={form.cost} onChange={handleChange} required
-                    className="w-full px-4 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider font-serif italic" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Current Stock</label>
-                  <input name="stockLevel" type="number" value={form.stockLevel} onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider font-serif" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Min Stock Alert</label>
-                  <input name="minStock" type="number" value={form.minStock} onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider font-serif" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Category</label>
-                <select name="categoryId" value={form.categoryId} onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white border border-border focus:border-black outline-none transition-all text-[10px] uppercase font-bold tracking-widest cursor-pointer">
-                  <option value="">NO CATEGORY</option>
-                  {categories?.map((cat: Category) => (
-                    <option key={cat.id} value={cat.id}>{cat.name.toUpperCase()}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex justify-end gap-6 pt-6 border-t border-border">
-                <button type="button" onClick={resetForm}
-                  className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted hover:text-black transition-colors">
-                  Abort
-                </button>
-                <button type="submit"
-                  disabled={createProduct.isPending || updateProduct.isPending}
-                  className="craft-btn flex items-center gap-3 text-[10px] h-10 px-6 disabled:opacity-30"
-                >
-                  {editingId ? <Edit3 size={16} /> : <Plus size={16} />}
-                  Execute Commit
+                <button onClick={resetForm} className="text-muted hover:text-accent transition-colors mb-2">
+                  <X size={24} strokeWidth={1} />
                 </button>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
+              
+              <form onSubmit={handleSubmit} className="p-10 space-y-10">
+                <div className="grid grid-cols-2 gap-10">
+                  <div className="space-y-3">
+                    <label className="text-[9px] font-bold text-muted uppercase tracking-[0.3em]">SKU *</label>
+                    <input name="sku" value={form.sku} onChange={handleChange} required
+                      className="input-premium" />
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-[9px] font-bold text-muted uppercase tracking-[0.3em]">Product Name *</label>
+                    <input name="name" value={form.name} onChange={handleChange} required
+                      className="input-premium" />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[9px] font-bold text-muted uppercase tracking-[0.3em]">Description</label>
+                  <textarea name="description" value={form.description} onChange={handleChange} rows={3}
+                    className="w-full px-6 py-6 bg-surface border border-border focus:border-black outline-none transition-all text-xs tracking-wider" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-10">
+                  <div className="space-y-3">
+                    <label className="text-[9px] font-bold text-muted uppercase tracking-[0.3em]">Price (₦) *</label>
+                    <input name="price" type="number" step="0.01" value={form.price} onChange={handleChange} required
+                      className="input-premium font-serif italic text-base" />
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-[9px] font-bold text-muted uppercase tracking-[0.3em]">Cost (₦) *</label>
+                    <input name="cost" type="number" step="0.01" value={form.cost} onChange={handleChange} required
+                      className="input-premium font-serif italic text-base" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-10">
+                  <div className="space-y-3">
+                    <label className="text-[9px] font-bold text-muted uppercase tracking-[0.3em]">Current Stock</label>
+                    <input name="stockLevel" type="number" value={form.stockLevel} onChange={handleChange}
+                      className="input-premium font-serif italic text-base" />
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-[9px] font-bold text-muted uppercase tracking-[0.3em]">Minimum Stock</label>
+                    <input name="minStock" type="number" value={form.minStock} onChange={handleChange}
+                      className="input-premium font-serif italic text-base" />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[9px] font-bold text-muted uppercase tracking-[0.3em]">Category</label>
+                  <select name="categoryId" value={form.categoryId} onChange={handleChange}
+                    className="w-full h-14 px-6 bg-surface border border-border focus:border-black outline-none transition-all text-[10px] uppercase font-bold tracking-[0.2em] cursor-pointer appearance-none">
+                    <option value="">UNCATEGORIZED</option>
+                    {categories?.map((cat: Category) => (
+                      <option key={cat.id} value={cat.id}>{cat.name.toUpperCase()}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex justify-end gap-10 pt-10 border-t border-border">
+                  <button type="button" onClick={resetForm}
+                    className="text-[10px] font-bold uppercase tracking-[0.4em] text-muted hover:text-black transition-colors">
+                    Cancel
+                  </button>
+                  <button type="submit"
+                    disabled={createProduct.isPending || updateProduct.isPending}
+                    className="craft-btn flex items-center gap-4 px-12 disabled:opacity-30"
+                  >
+                    {editingId ? <Edit3 size={16} /> : <Plus size={16} />}
+                    Save Product
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </AnimatedPage>
   );
 }
+
+

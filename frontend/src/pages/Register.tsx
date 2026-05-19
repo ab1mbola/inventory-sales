@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { api } from '../services/api';
-import { Package, ArrowRight, Loader2, Building2 } from 'lucide-react';
+import { Package, ArrowRight, Loader2, Building2, User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import AnimatedPage from '../components/AnimatedPage';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -11,6 +13,7 @@ export default function Register() {
   const [companyName, setCompanyName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -39,115 +42,169 @@ export default function Register() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8 relative overflow-hidden font-sans">
-      <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none select-none text-right">
-        <h1 className="font-serif text-[15vw] font-bold leading-none tracking-tighter uppercase">Join</h1>
-        <h1 className="font-serif text-[10vw] font-bold leading-none tracking-tighter uppercase italic">Inventory</h1>
-      </div>
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3
+      }
+    }
+  };
 
-      <div className="w-full max-w-sm relative z-10">
-        <div className="text-left mb-12 border-b border-black pb-8">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-12 border-2 border-black flex items-center justify-center bg-black">
-               <Package size={24} className="text-white" />
-            </div>
-            <h2 className="font-serif text-3xl font-bold tracking-tighter uppercase">Inventory</h2>
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { ease: [0.23, 1, 0.32, 1] as const, duration: 0.8 } }
+  };
+
+  return (
+    <AnimatedPage className="min-h-screen bg-white flex flex-col items-center justify-center p-8 relative overflow-hidden font-sans">
+      {/* Editorial Background Element */}
+      <motion.div 
+        initial={{ opacity: 0, x: 100 }}
+        animate={{ opacity: 0.03, x: 0 }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+        className="absolute top-0 right-0 p-12 pointer-events-none select-none text-right"
+      >
+        <h1 className="font-serif text-[20vw] font-bold leading-none tracking-tighter uppercase italic">Register</h1>
+      </motion.div>
+
+      <motion.div 
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="w-full max-w-sm relative z-10"
+      >
+        <motion.div variants={item} className="text-left mb-12 border-b border-black pb-10">
+          <div className="flex items-center gap-4 mb-10 group">
+            <motion.div 
+              whileHover={{ scale: 1.1, backgroundColor: "var(--color-primary)" }}
+              className="w-14 h-14 border-2 border-black flex items-center justify-center bg-black transition-all duration-500"
+            >
+               <Package size={28} className="text-white" />
+            </motion.div>
+            <h2 className="font-serif text-4xl font-bold tracking-tighter uppercase italic">Mnemos</h2>
           </div>
-          <h1 className="text-5xl font-serif font-bold tracking-tighter uppercase leading-none italic text-accent">Sign Up</h1>
-          <p className="text-[10px] text-muted mt-4 uppercase tracking-[0.4em] font-bold">New Organization Enrollment</p>
-        </div>
+          <h1 className="text-6xl font-serif font-bold tracking-tighter uppercase leading-none italic text-primary">Join</h1>
+          <p className="text-[10px] text-muted mt-6 uppercase tracking-[0.5em] font-bold opacity-40 italic">Create your account</p>
+        </motion.div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {error && (
-            <div className="border border-red-500 text-red-500 p-4 text-[10px] font-bold uppercase tracking-widest animate-in fade-in slide-in-from-top-2 duration-300">
-              Error: {typeof error === 'string' ? error : JSON.stringify(error)}
-            </div>
+            <motion.div 
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="border-l-4 border-accent bg-accent-soft/30 p-5 text-[10px] font-bold uppercase tracking-widest text-accent"
+            >
+              Registration Error: {typeof error === 'string' ? error : 'Registration Rejected'}
+            </motion.div>
           )}
 
-          <div className="space-y-4">
+          <motion.div variants={item} className="space-y-6">
             <div className="group">
-              <label className="text-[9px] font-bold text-muted uppercase tracking-[0.3em] ml-1">Full Name</label>
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="JOHN DOE"
-                className="w-full mt-2 px-4 py-4 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider uppercase font-bold"
-              />
+              <label className="text-[9px] font-bold text-muted uppercase tracking-[0.4em] ml-1 group-focus-within:text-accent transition-colors duration-500">Full Name</label>
+              <div className="relative mt-3">
+                <User size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-muted/40 group-focus-within:text-black transition-colors" />
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="FULL NAME"
+                  className="w-full pl-12 pr-6 py-5 bg-surface border border-border focus:border-black outline-none transition-all text-xs tracking-[0.1em] uppercase font-bold placeholder:opacity-20"
+                />
+              </div>
             </div>
 
             <div className="group">
-              <label className="text-[9px] font-bold text-muted uppercase tracking-[0.3em] ml-1">Company Name</label>
-              <div className="relative mt-2">
-                <Building2 size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
+              <label className="text-[9px] font-bold text-muted uppercase tracking-[0.4em] ml-1 group-focus-within:text-accent transition-colors duration-500">Company Name</label>
+              <div className="relative mt-3">
+                <Building2 size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-muted/40 group-focus-within:text-black transition-colors" />
                 <input
                   type="text"
                   required
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   placeholder="ACME CORP"
-                  className="w-full pl-10 pr-4 py-4 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider uppercase font-bold"
+                  className="w-full pl-12 pr-6 py-5 bg-surface border border-border focus:border-black outline-none transition-all text-xs tracking-[0.1em] uppercase font-bold placeholder:opacity-20"
                 />
               </div>
             </div>
 
             <div className="group">
-              <label className="text-[9px] font-bold text-muted uppercase tracking-[0.3em] ml-1">Credential Email</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="IDENTITY@SYSTEM.IO"
-                className="w-full mt-2 px-4 py-4 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider uppercase font-bold"
-              />
+              <label className="text-[9px] font-bold text-muted uppercase tracking-[0.4em] ml-1 group-focus-within:text-accent transition-colors duration-500">Email Address</label>
+              <div className="relative mt-3">
+                <Mail size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-muted/40 group-focus-within:text-black transition-colors" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="email@example.com"
+                  className="w-full pl-12 pr-6 py-5 bg-surface border border-border focus:border-black outline-none transition-all text-xs tracking-[0.1em] uppercase font-bold placeholder:opacity-20"
+                />
+              </div>
             </div>
 
             <div className="group">
-              <label className="text-[9px] font-bold text-muted uppercase tracking-[0.3em] ml-1">Access Passphrase</label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full mt-2 px-4 py-4 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider font-bold"
-              />
+              <label className="text-[9px] font-bold text-muted uppercase tracking-[0.4em] ml-1 group-focus-within:text-accent transition-colors duration-500">Password</label>
+              <div className="relative mt-3">
+                <Lock size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-muted/40 group-focus-within:text-black transition-colors" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full pl-12 pr-16 py-5 bg-surface border border-border focus:border-black outline-none transition-all text-xs tracking-widest font-bold placeholder:opacity-20"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-6 top-1/2 -translate-y-1/2 text-muted/40 hover:text-black transition-colors"
+                >
+                  {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                </button>
+              </div>
             </div>
-          </div>
+          </motion.div>
 
-          <button
+          <motion.button
+            variants={item}
             type="submit"
             disabled={isLoading}
-            className="w-full py-6 bg-black hover:bg-accent text-white font-bold uppercase tracking-[0.5em] text-[10px] transition-all duration-500 flex items-center justify-center gap-4 group disabled:opacity-20 cursor-pointer"
+            whileHover={{ scale: 1.02, backgroundColor: "var(--color-primary)" }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full py-7 bg-black text-white font-bold uppercase tracking-[0.6em] text-[10px] transition-all duration-700 flex items-center justify-center gap-6 group disabled:opacity-20 cursor-pointer shadow-2xl"
           >
             {isLoading ? (
-              <Loader2 size={20} className="animate-spin" />
+              <Loader2 size={24} className="animate-spin" />
             ) : (
               <>
-                <span>Initialize Organization</span>
-                <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform duration-500" />
+                <span>Create Account</span>
+                <ArrowRight size={20} className="group-hover:translate-x-3 transition-transform duration-700" />
               </>
             )}
-          </button>
+          </motion.button>
         </form>
 
-        <div className="mt-12 text-center">
-          <p className="text-[10px] text-muted uppercase tracking-widest font-bold">
-            Already registered? <Link to="/login" className="text-accent hover:underline ml-2">Sign In</Link>
+        <motion.div variants={item} className="mt-16 text-center">
+          <p className="text-[10px] text-muted uppercase tracking-[0.3em] font-bold">
+            Already registered? <Link to="/login" className="text-accent hover:tracking-[0.5em] transition-all ml-4 underline decoration-1 underline-offset-4">Sign In</Link>
           </p>
-        </div>
+        </motion.div>
 
-        <div className="mt-16 flex justify-between items-center opacity-40">
-           <div className="h-px bg-black flex-1 mr-4" />
-           <p className="text-[9px] font-bold uppercase tracking-widest whitespace-nowrap">
-             Organization Setup — v1.0
+        <motion.div variants={item} className="mt-20 flex justify-between items-center opacity-20">
+           <div className="h-px bg-black flex-1 mr-6" />
+           <p className="text-[9px] font-bold uppercase tracking-[0.5em] whitespace-nowrap italic">
+             Mnemos System — v1.0
            </p>
-           <div className="h-px bg-black flex-1 ml-4" />
-        </div>
-      </div>
-    </div>
+           <div className="h-px bg-black flex-1 ml-6" />
+        </motion.div>
+      </motion.div>
+    </AnimatedPage>
   );
 }
+
+

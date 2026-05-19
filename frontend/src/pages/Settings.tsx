@@ -8,7 +8,9 @@ import {
   CheckCircle2, 
   AlertCircle,
   Save,
-  Loader2
+  Loader2,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { 
@@ -32,6 +34,10 @@ export default function Settings() {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [companyName, setCompanyName] = useState('');
   const [companyLogo, setCompanyLogo] = useState<string | null>(null);
@@ -139,8 +145,8 @@ export default function Settings() {
       )}
 
       <header className="border-b border-black pb-6">
-        <h1 className="text-2xl lg:text-3xl font-serif font-bold tracking-tighter uppercase leading-none">Configurations</h1>
-        <p className="text-[10px] text-muted mt-3 uppercase tracking-[0.3em] font-bold">Preferences & System Parameters</p>
+        <h1 className="text-2xl lg:text-3xl font-serif font-bold tracking-tighter uppercase leading-none">Settings</h1>
+        <p className="text-[10px] text-muted mt-3 uppercase tracking-[0.3em] font-bold">App Preferences</p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -153,7 +159,7 @@ export default function Settings() {
             }`}
           >
             <User size={14} />
-            <span>Profile Identity</span>
+            <span>Profile Settings</span>
           </button>
           {isOwnerOrManager && (
             <button 
@@ -163,7 +169,7 @@ export default function Settings() {
               }`}
             >
               <Building2 size={14} />
-              <span>Corporate Meta</span>
+              <span>Company Settings</span>
             </button>
           )}
         </aside>
@@ -177,12 +183,12 @@ export default function Settings() {
               <section className="craft-card overflow-hidden">
                 <div className="px-6 py-4 border-b border-border flex items-center gap-3 bg-surface/30">
                   <User size={16} className="text-accent" />
-                  <h2 className="font-serif text-lg font-bold italic">Personal Information</h2>
+                  <h2 className="font-serif text-lg font-bold italic">Profile</h2>
                 </div>
                 <form onSubmit={handleProfileSubmit} className="p-6 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Legal Name</label>
+                      <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Full Name</label>
                       <input 
                         type="text" 
                         value={profileName}
@@ -192,7 +198,7 @@ export default function Settings() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Electronic Mail</label>
+                      <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Email Address</label>
                       <input 
                         type="email" 
                         value={profileEmail}
@@ -209,7 +215,7 @@ export default function Settings() {
                       className="craft-btn flex items-center gap-3 text-[10px] disabled:opacity-30"
                     >
                       {updateProfile.isPending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                      Commit Changes
+                      Save Settings
                     </button>
                   </div>
                 </form>
@@ -219,39 +225,66 @@ export default function Settings() {
               <section className="craft-card overflow-hidden">
                 <div className="px-6 py-4 border-b border-border flex items-center gap-3 bg-surface/30">
                   <Lock size={16} className="text-accent" />
-                  <h2 className="font-serif text-lg font-bold italic">Security Protocol</h2>
+                  <h2 className="font-serif text-lg font-bold italic">Security</h2>
                 </div>
                 <form onSubmit={handlePasswordSubmit} className="p-6 space-y-6">
                   <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Existing Passphrase</label>
-                    <input 
-                      type="password" 
-                      value={oldPassword}
-                      onChange={(e) => setOldPassword(e.target.value)}
-                      required
-                      className="w-full px-4 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider"
-                    />
+                    <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Current Password</label>
+                    <div className="relative">
+                      <input 
+                        type={showOldPassword ? "text" : "password"} 
+                        value={oldPassword}
+                        onChange={(e) => setOldPassword(e.target.value)}
+                        required
+                        className="w-full pl-4 pr-12 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowOldPassword(!showOldPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted/40 hover:text-black transition-colors"
+                      >
+                        {showOldPassword ? <Eye size={16} /> : <EyeOff size={16} />}
+                      </button>
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">New Sequence</label>
-                      <input 
-                        type="password" 
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        required
-                        className="w-full px-4 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider"
-                      />
+                      <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">New Password</label>
+                      <div className="relative">
+                        <input 
+                          type={showNewPassword ? "text" : "password"} 
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          required
+                          className="w-full pl-4 pr-12 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowNewPassword(!showNewPassword)}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-muted/40 hover:text-black transition-colors"
+                        >
+                          {showNewPassword ? <Eye size={16} /> : <EyeOff size={16} />}
+                        </button>
+                      </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Confirm Sequence</label>
-                      <input 
-                        type="password" 
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                        className="w-full px-4 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider"
-                      />
+                      <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Confirm Password</label>
+                      <div className="relative">
+                        <input 
+                          type={showConfirmPassword ? "text" : "password"} 
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          required
+                          className="w-full pl-4 pr-12 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-muted/40 hover:text-black transition-colors"
+                        >
+                          {showConfirmPassword ? <Eye size={16} /> : <EyeOff size={16} />}
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <div className="pt-2 flex justify-end">
@@ -261,7 +294,7 @@ export default function Settings() {
                       className="px-6 py-3 bg-white border border-black text-black hover:bg-black hover:text-white transition-all text-[10px] font-bold uppercase tracking-widest flex items-center gap-3 disabled:opacity-30"
                     >
                       {updatePassword.isPending ? <Loader2 size={16} className="animate-spin" /> : <Lock size={14} />}
-                      Update Protocol
+                      Update Password
                     </button>
                   </div>
                 </form>
@@ -274,17 +307,17 @@ export default function Settings() {
               <section className="craft-card overflow-hidden">
                 <div className="px-6 py-4 border-b border-border flex items-center gap-3 bg-surface/30">
                   <Building2 size={16} className="text-accent" />
-                  <h2 className="font-serif text-lg font-bold italic">Corporate Identity</h2>
+                  <h2 className="font-serif text-lg font-bold italic">Company Details</h2>
                 </div>
                 {loadingCompany ? (
-                  <FullPageLoader message="Loading Corporate Data..." />
+                  <FullPageLoader message="Loading Company Data..." />
                 ) : (
 
                   <form onSubmit={handleCompanySubmit} className="p-6 space-y-8">
                     <div className="flex flex-col md:flex-row gap-12 items-start">
                       {/* Logo Upload */}
                       <div className="space-y-4 shrink-0">
-                        <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em] block">Insignia</label>
+                        <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em] block">Company Logo</label>
                         <div 
                           onClick={() => fileInputRef.current?.click()}
                           className="w-32 h-32 border border-border bg-white flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-accent group relative transition-all"
@@ -316,7 +349,7 @@ export default function Settings() {
 
                       <div className="flex-1 space-y-8 w-full">
                         <div className="space-y-2">
-                          <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Entity Name</label>
+                          <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Company Name</label>
                           <input 
                             type="text" 
                             value={companyName}
@@ -326,7 +359,7 @@ export default function Settings() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Legal Disclaimer</label>
+                          <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em]">Copyright Text</label>
                           <input 
                             type="text" 
                             placeholder="e.g. © 2024 Your Corporate Entity"
@@ -345,7 +378,7 @@ export default function Settings() {
                         className="craft-btn flex items-center gap-3 text-[10px] disabled:opacity-30"
                       >
                         {updateCompany.isPending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                        Sync Parameters
+                        Save Company Settings
                       </button>
                     </div>
                   </form>

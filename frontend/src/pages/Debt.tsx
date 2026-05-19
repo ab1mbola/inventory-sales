@@ -87,7 +87,7 @@ export default function Debt() {
 
           <div className="flex-1 overflow-y-auto space-y-4 pr-2 no-scrollbar">
             {isLoadingDebtors ? (
-              <div className="p-10 text-center text-muted text-[10px] uppercase tracking-[0.2em] font-bold">Retrieving Registry...</div>
+              <div className="p-10 text-center text-muted text-[10px] uppercase tracking-[0.2em] font-bold">Loading Debtors...</div>
             ) : filteredDebtors?.length === 0 ? (
               <div className="p-16 text-center text-muted bg-surface/30 border border-dashed border-border craft-card">
                 <AlertCircle className="mx-auto mb-4 opacity-20" size={32} strokeWidth={1} />
@@ -107,7 +107,7 @@ export default function Debt() {
                   <div className="flex justify-between items-start relative z-10">
                     <div className="min-w-0">
                       <h3 className={`text-base font-serif font-bold italic tracking-tight ${selectedDebtorId === debtor.id ? 'text-white' : 'text-primary'}`}>{debtor.name}</h3>
-                      <p className={`text-[9px] font-bold uppercase tracking-widest mt-1 ${selectedDebtorId === debtor.id ? 'text-white/60' : 'text-muted'}`}>{debtor.phone || 'NO CHANNEL'}</p>
+                      <p className={`text-[9px] font-bold uppercase tracking-widest mt-1 ${selectedDebtorId === debtor.id ? 'text-white/60' : 'text-muted'}`}>{debtor.phone || 'No Phone'}</p>
                     </div>
                     <div className="text-right">
                       <p className={`text-lg font-serif font-bold italic leading-none ${selectedDebtorId === debtor.id ? 'text-white' : 'text-accent'}`}>₦{debtor.totalOwed.toLocaleString()}</p>
@@ -120,7 +120,7 @@ export default function Debt() {
                       selectedDebtorId === debtor.id ? 'border-white/10 text-white/40' : 'border-border text-muted/50'
                     }`}>
                       <Calendar size={12} />
-                      Last Event: {format(new Date(debtor.lastPaymentDate), 'MMM d, yyyy')}
+                      Last Payment: {format(new Date(debtor.lastPaymentDate), 'MMM d, yyyy')}
                     </div>
                   )}
                 </button>
@@ -143,7 +143,7 @@ export default function Debt() {
             </div>
           ) : isLoadingDetails ? (
             <div className="flex-1 flex items-center justify-center">
-              <FullPageLoader message="Fetching Financial History..." />
+              <FullPageLoader message="Loading History..." />
             </div>
           ) : (
 
@@ -167,7 +167,7 @@ export default function Debt() {
                   className="craft-btn h-12 px-8 flex items-center gap-3 text-[10px]"
                 >
                   <ArrowDownLeft size={18} />
-                  Execute Repayment
+                  Add Payment
                 </button>
               </div>
 
@@ -234,7 +234,7 @@ export default function Debt() {
           >
             <div className="p-6 border-b border-border flex flex-col gap-2 bg-surface/50">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-serif font-bold italic tracking-tight">ADD PAYMENT</h2>
+                <h2 className="text-xl font-serif font-bold italic tracking-tight">Add Payment</h2>
                 <button onClick={() => setIsPaymentModalOpen(false)} className="text-muted hover:text-accent transition-colors cursor-pointer"><X size={20} /></button>
               </div>
               <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em]">Customer: {selectedDebtor?.name}</p>
@@ -297,14 +297,14 @@ export default function Debt() {
                   onClick={() => setIsPaymentModalOpen(false)}
                   className="flex-1 h-12 border border-border text-muted hover:text-primary hover:border-primary text-[10px] font-bold uppercase tracking-[0.3em] transition-all cursor-pointer"
                 >
-                  ABORT
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!paymentAmount || Number(paymentAmount) <= 0}
                   className="flex-1 h-12 craft-btn text-[10px] cursor-pointer"
                 >
-                  EXECUTE PAYMENT
+                  Save Payment
                 </button>
               </div>
             </form>

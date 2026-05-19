@@ -24,6 +24,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
   const [isLoading, setIsLoading] = useState(true);
 
+  const login = (newToken: string, newUser: User) => {
+    localStorage.setItem('token', newToken);
+    setToken(newToken);
+    setUser(newUser);
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+    setUser(null);
+  };
+
   useEffect(() => {
     const initAuth = async () => {
       const savedToken = localStorage.getItem('token');
@@ -40,18 +52,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     initAuth();
   }, []);
-
-  const login = (newToken: string, newUser: User) => {
-    localStorage.setItem('token', newToken);
-    setToken(newToken);
-    setUser(newUser);
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-    setUser(null);
-  };
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
