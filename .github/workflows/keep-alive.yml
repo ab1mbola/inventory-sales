@@ -1,0 +1,49 @@
+name: Database Keep-Alive Cron
+
+on:
+  schedule:
+    # Run every day at 00:00 UTC (keeps Supabase active)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allows manual trigger from the GitHub Actions tab
+
+jobs:
+  ping-databases:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping DB Keep-Alive Endpoint
+        run: |
+          if [ -z "${{ secrets.PRODUCTION_APP_URL }}" ]; then
+            echo "❌ ERROR: PRODUCTION_APP_URL secret is not defined in GitHub Secrets."
+            exit 1
+          fi
+          
+          if [ -z "${{ secrets.CRON_SECRET }}" ]; then
+            echo "❌ ERROR: CRON_SECRET secret is not defined in GitHub Secrets."
+            exit 1
+          fi
+          
+          # Strip trailing slash from production app URL if present
+          BASE_URL="${{ secrets.PRODUCTION_APP_URL }}"
+          BASE_URL="${BASE_URL%/}"
+          
+          echo "Sending keep-alive ping request to the backend..."
+          
+          # Call the /api/cron/keep-alive endpoint
+          RESPONSE=$(curl -s -w "%{http_code}" -X GET \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "$BASE_URL/_/backend/api/cron/keep-alive")
+          
+          HTTP_STATUS="${RESPONSE:${#RESPONSE}-3}"
+          BODY="${RESPONSE:0:${#RESPONSE}-3}"
+          
+          echo "=============================================="
+          echo "HTTP Status Code: $HTTP_STATUS"
+          echo "Response Body: $BODY"
+          echo "=============================================="
+          
+          if [ "$HTTP_STATUS" -eq 200 ] || [ "$HTTP_STATUS" -eq 207 ]; then
+            echo "✅ Database keep-alive ping completed successfully!"
+          else
+            echo "❌ Database keep-alive ping failed with HTTP Status: $HTTP_STATUS"
+            exit 1
+          fi

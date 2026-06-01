@@ -9,5 +9,11 @@
       "entrypoint": "backend",
       "routePrefix": "/_/backend"
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/_/backend/api/cron/keep-alive",
+      "schedule": "0 0 * * *"
+    }
+  ]
 }
