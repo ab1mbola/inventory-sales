@@ -7,6 +7,7 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "prisma generate && prisma migrate deploy && prisma db seed && tsc",
     "start": "node dist/index.js",
+    "keep-alive": "ts-node src/scripts/keep-alive.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

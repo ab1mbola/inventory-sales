@@ -33,6 +33,7 @@ import authRoutes from './routes/authRoutes';
 import customerRoutes from './routes/customerRoutes';
 import debtRoutes from './routes/debtRoutes';
 import settingsRoutes from './routes/settingsRoutes';
+import keepAliveRoutes from './routes/keepAliveRoutes';
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -44,6 +45,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/cron', keepAliveRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Mnemos API is running' });
