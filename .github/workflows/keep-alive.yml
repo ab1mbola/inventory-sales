@@ -11,26 +11,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping DB Keep-Alive Endpoint
+        env:
+          PRODUCTION_APP_URL: ${{ secrets.PRODUCTION_APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          if [ -z "${{ secrets.PRODUCTION_APP_URL }}" ]; then
+          if [ -z "$PRODUCTION_APP_URL" ]; then
             echo "❌ ERROR: PRODUCTION_APP_URL secret is not defined in GitHub Secrets."
             exit 1
           fi
           
-          if [ -z "${{ secrets.CRON_SECRET }}" ]; then
+          if [ -z "$CRON_SECRET" ]; then
             echo "❌ ERROR: CRON_SECRET secret is not defined in GitHub Secrets."
             exit 1
           fi
           
           # Strip trailing slash from production app URL if present
-          BASE_URL="${{ secrets.PRODUCTION_APP_URL }}"
+          BASE_URL="$PRODUCTION_APP_URL"
           BASE_URL="${BASE_URL%/}"
           
           echo "Sending keep-alive ping request to the backend..."
           
           # Call the /api/cron/keep-alive endpoint
           RESPONSE=$(curl -s -w "%{http_code}" -X GET \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Authorization: Bearer $CRON_SECRET" \
             "$BASE_URL/_/backend/api/cron/keep-alive")
           
           HTTP_STATUS="${RESPONSE:${#RESPONSE}-3}"

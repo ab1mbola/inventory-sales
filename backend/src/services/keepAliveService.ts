@@ -11,12 +11,12 @@ export interface KeepAliveResults {
   production: PingResult;
 }
 
-async function pingDatabase(name: string, connectionString: string | undefined): Promise<PingResult> {
+async function pingDatabase(name: string, envVarName: string, connectionString: string | undefined): Promise<PingResult> {
   const timestamp = new Date().toISOString();
   if (!connectionString) {
     return {
       success: false,
-      message: `${name} database URL (DATABASE_URL_${name.toUpperCase()}) is not defined in environment variables.`,
+      message: `${name} database URL (${envVarName}) is not defined in environment variables.`,
       timestamp
     };
   }
@@ -73,8 +73,8 @@ export async function pingAllDatabases(): Promise<KeepAliveResults> {
   const prodUrl = process.env.DATABASE_URL_PROD;
 
   const [devResult, prodResult] = await Promise.all([
-    pingDatabase('development', devUrl),
-    pingDatabase('production', prodUrl)
+    pingDatabase('development', 'DATABASE_URL_DEV', devUrl),
+    pingDatabase('production', 'DATABASE_URL_PROD', prodUrl)
   ]);
 
   return {
