@@ -15,7 +15,7 @@ main (production)
   │
 dev (integration / test environment)
   ▲
-  │ (pull request with Enkii review)
+  │ (pull request merge)
   │
 feat/* or fix/* (developer & agent feature branches)
 ```
@@ -39,25 +39,7 @@ feat/* or fix/* (developer & agent feature branches)
 
 ---
 
-## 🤖 2. Automated PR Review with Enkii
-
-We use **Enkii**, a repo-native, AI-powered code review GitHub Action, to automatically review and sanitize code changes on every pull request targeting `dev` or `main`.
-
-### Workflow Location
-The workflow is defined under [`.github/workflows/enkii-review.yml`](file:///c:/Dev/Inventory/.github/workflows/enkii-review.yml).
-
-### Features of the Review Pipeline
-- **Auto-Review on PR Events**: Triggers automatically when a Pull Request is opened, synchronized (new commits pushed), or reopened.
-- **On-Demand Bot Commands**: Developers can request targeted actions directly in PR comment sections:
-  - `@enkii /review`: Re-runs the full AI code review.
-  - `@enkii /security`: Performs a focused scan on security concerns, credentials leakage, and query scoping breaches.
-  - `@enkii /benchmark`: Runs a fresh code review ignoring prior PR review comments.
-  - `@enkii status`: Displays the execution status of the current review job.
-- **Tenant Isolation Security Checks**: Enkii is trained to scan backend changes for direct models access, ensuring database transactions use the scoped `req.db` client rather than the global `internal_unscoped_prisma` client.
-
----
-
-## 🧪 3. Automated Pre-Commit Hook (Quality Gates)
+## 🧪 2. Automated Pre-Commit Hook (Quality Gates)
 
 We have configured an automated Git **`pre-commit`** hook under [`.git/hooks/pre-commit`](file:///c:/Dev/Inventory/.git/hooks/pre-commit) to enforce code quality before a commit is finalized.
 
@@ -78,7 +60,7 @@ git commit -m "wip: active work in progress" --no-verify
 
 ---
 
-## 🚀 4. Deployment Checklists
+## 🚀 3. Deployment Checklists
 
 ### Pre-Deployment Check
 - [ ] Database migrations are successfully generated and applied: `npx prisma migrate dev`

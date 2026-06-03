@@ -10,7 +10,6 @@
 - **Architecture**: Multi-Tenant Logical Partitioning (`req.db`) — **100% Implemented & Verified**
 - **Design System**: "Mnemos Craft" editorial typography & buttery smooth staggered tables — **100% Implemented**
 - **Point of Sale (POS)**: Multi-method checkouts (Cash, Card, Transfer, Credit) with printable thermal receipts — **100% Implemented**
-- **AI Integration**: Enkii PR review bot pipeline wired via GitHub Actions — **100% Implemented & Verified**
 
 ---
 
@@ -38,11 +37,6 @@
 - [x] Built inventory CRUD with automatic threshold warnings for items below `minStock`.
 - [x] Wired custom categories lookup and indexing systems.
 - [x] Implemented complete Debtor Tracking pages allowing shops to view, filter, and log payments for unpaid credit accounts.
-
-### 5. Automated Review Workflow
-- [x] Created Enkii review workflow under `.github/workflows/enkii-review.yml`.
-- [x] Configured strict write permissions for pull-requests and issues.
-- [x] Set up OpenRouter authentication keys ready to receive PR review comments.
 
 ---
 
