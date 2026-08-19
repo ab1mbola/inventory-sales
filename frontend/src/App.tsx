@@ -8,12 +8,13 @@ import POS from './pages/POS';
 import Sales from './pages/Sales';
 import Reports from './pages/Reports';
 import Customers from './pages/Customers';
-import Debt from './pages/Debt';
+import Credit from './pages/Credit';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
 import FullPageLoader from './components/FullPageLoader';
+import { GlobalDialog } from './components/GlobalDialog';
 
 function ProtectedLayout() {
   const { user, isLoading } = useAuth();
@@ -28,7 +29,7 @@ function ProtectedLayout() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-white">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-background">
       <Sidebar />
       <main className="flex-1 overflow-auto pt-16 lg:pt-0">
         <Routes>
@@ -39,7 +40,7 @@ function ProtectedLayout() {
           <Route path="/sales" element={<Sales />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/customers" element={<Customers />} />
-          <Route path="/debt" element={<Debt />} />
+          <Route path="/credit" element={<Credit />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
@@ -58,6 +59,7 @@ export default function App() {
           <Route path="*" element={<ProtectedLayout />} />
         </Routes>
       </BrowserRouter>
+      <GlobalDialog />
     </AuthProvider>
   );
 }

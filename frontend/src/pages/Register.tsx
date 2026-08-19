@@ -59,7 +59,7 @@ export default function Register() {
   };
 
   return (
-    <AnimatedPage className="min-h-screen bg-white flex flex-col items-center justify-center p-8 relative overflow-hidden font-sans">
+    <AnimatedPage className="min-h-screen bg-background flex flex-col items-center justify-center p-8 relative overflow-hidden font-sans">
       {/* Editorial Background Element */}
       <motion.div 
         initial={{ opacity: 0, x: 100 }}
@@ -67,7 +67,7 @@ export default function Register() {
         transition={{ duration: 1.5, ease: "easeOut" }}
         className="absolute top-0 right-0 p-12 pointer-events-none select-none text-right"
       >
-        <h1 className="font-serif text-[20vw] font-bold leading-none tracking-tighter uppercase italic">Register</h1>
+        <h1 className="font-sans text-[20vw] font-black leading-none tracking-tighter uppercase">Register</h1>
       </motion.div>
 
       <motion.div 
@@ -76,18 +76,18 @@ export default function Register() {
         animate="show"
         className="w-full max-w-sm relative z-10"
       >
-        <motion.div variants={item} className="text-left mb-12 border-b border-black pb-10">
+        <motion.div variants={item} className="text-left mb-12 border-b border-border pb-10">
           <div className="flex items-center gap-4 mb-10 group">
             <motion.div 
               whileHover={{ scale: 1.1, backgroundColor: "var(--color-primary)" }}
-              className="w-14 h-14 border-2 border-black flex items-center justify-center bg-black transition-all duration-500"
+              className="w-14 h-14 border-2 border-black rounded-2xl flex items-center justify-center bg-black transition-all duration-500"
             >
                <Package size={28} className="text-white" />
             </motion.div>
-            <h2 className="font-serif text-4xl font-bold tracking-tighter uppercase italic">Mnemos</h2>
+            <h2 className="font-sans text-4xl font-black tracking-tighter uppercase">Mnemos</h2>
           </div>
-          <h1 className="text-6xl font-serif font-bold tracking-tighter uppercase leading-none italic text-primary">Join</h1>
-          <p className="text-[10px] text-muted mt-6 uppercase tracking-[0.5em] font-bold opacity-40 italic">Create your account</p>
+          <h1 className="text-6xl font-sans font-black tracking-tighter uppercase leading-none text-primary">Join</h1>
+          <p className="text-[10px] text-muted mt-6 uppercase tracking-[0.5em] font-bold opacity-40">Create your account</p>
         </motion.div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -95,7 +95,7 @@ export default function Register() {
             <motion.div 
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className="border-l-4 border-accent bg-accent-soft/30 p-5 text-[10px] font-bold uppercase tracking-widest text-accent"
+              className="border border-accent/20 bg-accent-soft/30 rounded-xl p-5 text-[10px] font-bold uppercase tracking-widest text-accent"
             >
               Registration Error: {typeof error === 'string' ? error : 'Registration Rejected'}
             </motion.div>
@@ -112,7 +112,7 @@ export default function Register() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="FULL NAME"
-                  className="w-full pl-12 pr-6 py-5 bg-surface border border-border focus:border-black outline-none transition-all text-xs tracking-[0.1em] uppercase font-bold placeholder:opacity-20"
+                  className="w-full pl-12 pr-6 py-5 bg-surface border border-border rounded-xl focus:border-accent focus:ring-4 focus:ring-accent-soft outline-none transition-all text-xs tracking-[0.1em] uppercase font-bold placeholder:opacity-20"
                 />
               </div>
             </div>
@@ -127,7 +127,7 @@ export default function Register() {
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   placeholder="ACME CORP"
-                  className="w-full pl-12 pr-6 py-5 bg-surface border border-border focus:border-black outline-none transition-all text-xs tracking-[0.1em] uppercase font-bold placeholder:opacity-20"
+                  className="w-full pl-12 pr-6 py-5 bg-surface border border-border rounded-xl focus:border-accent focus:ring-4 focus:ring-accent-soft outline-none transition-all text-xs tracking-[0.1em] uppercase font-bold placeholder:opacity-20"
                 />
               </div>
             </div>
@@ -142,7 +142,7 @@ export default function Register() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="email@example.com"
-                  className="w-full pl-12 pr-6 py-5 bg-surface border border-border focus:border-black outline-none transition-all text-xs tracking-[0.1em] uppercase font-bold placeholder:opacity-20"
+                  className="w-full pl-12 pr-6 py-5 bg-surface border border-border rounded-xl focus:border-accent focus:ring-4 focus:ring-accent-soft outline-none transition-all text-xs tracking-[0.1em] uppercase font-bold placeholder:opacity-20"
                 />
               </div>
             </div>
@@ -157,12 +157,12 @@ export default function Register() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-16 py-5 bg-surface border border-border focus:border-black outline-none transition-all text-xs tracking-widest font-bold placeholder:opacity-20"
+                  className="w-full pl-12 pr-16 py-5 bg-surface border border-border rounded-xl focus:border-accent focus:ring-4 focus:ring-accent-soft outline-none transition-all text-xs tracking-widest font-bold placeholder:opacity-20"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-6 top-1/2 -translate-y-1/2 text-muted/40 hover:text-black transition-colors"
+                  className="absolute right-6 top-1/2 -translate-y-1/2 text-muted/40 hover:text-black transition-colors cursor-pointer"
                 >
                   {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
                 </button>
@@ -174,16 +174,16 @@ export default function Register() {
             variants={item}
             type="submit"
             disabled={isLoading}
-            whileHover={{ scale: 1.02, backgroundColor: "var(--color-primary)" }}
+            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full py-7 bg-black text-white font-bold uppercase tracking-[0.6em] text-[10px] transition-all duration-700 flex items-center justify-center gap-6 group disabled:opacity-20 cursor-pointer shadow-2xl"
+            className="w-full py-5 bg-primary text-white font-bold uppercase tracking-[0.4em] text-[10px] rounded-full transition-all duration-300 flex items-center justify-center gap-6 group disabled:opacity-20 cursor-pointer shadow-2xl hover:bg-accent hover:shadow-accent"
           >
             {isLoading ? (
               <Loader2 size={24} className="animate-spin" />
             ) : (
               <>
                 <span>Create Account</span>
-                <ArrowRight size={20} className="group-hover:translate-x-3 transition-transform duration-700" />
+                <ArrowRight size={20} className="group-hover:translate-x-3 transition-transform duration-300" />
               </>
             )}
           </motion.button>
@@ -195,16 +195,15 @@ export default function Register() {
           </p>
         </motion.div>
 
-        <motion.div variants={item} className="mt-20 flex justify-between items-center opacity-20">
-           <div className="h-px bg-black flex-1 mr-6" />
-           <p className="text-[9px] font-bold uppercase tracking-[0.5em] whitespace-nowrap italic">
+        {/* Footer */}
+        <motion.div variants={item} className="mt-20 flex justify-between items-center opacity-30">
+           <div className="h-px bg-border flex-1 mr-6" />
+           <p className="text-[9px] font-bold uppercase tracking-[0.5em] whitespace-nowrap">
              Mnemos System — v1.0
            </p>
-           <div className="h-px bg-black flex-1 ml-6" />
+           <div className="h-px bg-border flex-1 ml-6" />
         </motion.div>
       </motion.div>
     </AnimatedPage>
   );
 }
-
-

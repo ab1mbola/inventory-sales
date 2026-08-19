@@ -13,9 +13,11 @@ import {
 } from 'lucide-react';
 import type { Customer } from '../types';
 import FullPageLoader from '../components/FullPageLoader';
+import { useDialogStore } from '../store/dialogStore';
 
 
 export default function Customers() {
+  const { showAlert, showConfirm } = useDialogStore();
   const { data: customers, isLoading, createCustomer, updateCustomer, deleteCustomer } = useCustomers();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,7 +47,7 @@ export default function Customers() {
       setIsModalOpen(false);
       resetForm();
     } catch (error) {
-      alert('Failed to save customer');
+      await showAlert('Failed to save customer', 'Customer Save Error', 'alert');
     }
   };
 
@@ -62,11 +64,12 @@ export default function Customers() {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this customer?')) {
+    const confirmed = await showConfirm('Are you sure you want to delete this customer?');
+    if (confirmed) {
       try {
         await deleteCustomer(id);
       } catch (error) {
-        alert('Failed to delete customer');
+        await showAlert('Failed to delete customer', 'Customer Delete Error', 'alert');
       }
     }
   };
@@ -77,16 +80,16 @@ export default function Customers() {
   };
 
   return (
-    <div className="p-4 lg:p-8 max-w-[1600px] mx-auto space-y-8 bg-white font-sans">
+    <div className="p-4 lg:p-8 max-w-[1600px] mx-auto space-y-8 bg-background font-sans">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-black pb-6">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-border pb-6">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-serif font-bold tracking-tighter uppercase leading-none italic">Customers</h1>
-          <p className="text-[10px] text-muted mt-3 uppercase tracking-[0.3em] font-bold italic">Manage your customer database</p>
+          <h1 className="text-2xl lg:text-3xl font-sans font-black tracking-tighter uppercase leading-none">Customers</h1>
+          <p className="text-[10px] text-muted mt-3 uppercase tracking-[0.3em] font-bold">Manage your customer database</p>
         </div>
         <button 
           onClick={() => { resetForm(); setIsModalOpen(true); }}
-          className="craft-btn flex items-center justify-center gap-3 px-6 h-12 text-[10px]"
+          className="tag-btn flex items-center justify-center gap-3 px-6 h-12 text-[10px]"
         >
           <UserPlus size={18} />
           Add Customer
@@ -102,12 +105,12 @@ export default function Customers() {
             placeholder="SEARCH BY NAME, PHONE OR EMAIL..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-16 pr-6 h-12 bg-white border border-border text-[11px] uppercase tracking-[0.1em] focus:border-accent focus:outline-none transition-all placeholder:text-muted/50"
+            className="w-full pl-16 pr-6 h-12 bg-white border border-border rounded-xl text-[11px] uppercase tracking-[0.1em] focus:border-accent focus:outline-none transition-all placeholder:text-muted/30 focus:ring-4 focus:ring-accent-soft"
           />
         </div>
-        <div className="craft-card px-6 h-12 flex items-center justify-between bg-surface/30">
+        <div className="tag-card px-6 h-12 flex items-center justify-between bg-surface/30">
           <span className="text-[10px] font-bold text-muted uppercase tracking-[0.2em]">Total</span>
-          <span className="text-lg font-serif font-bold italic text-primary leading-none">{customers?.length || 0}</span>
+          <span className="text-lg font-sans font-black text-primary leading-none">{customers?.length || 0}</span>
         </div>
       </div>
 
@@ -118,9 +121,9 @@ export default function Customers() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCustomers?.map((customer) => (
-            <div key={customer.id} className="craft-card p-6 group hover:bg-surface/50 transition-all border-l-4 border-l-primary hover:border-l-accent">
+            <div key={customer.id} className="tag-card p-6 group hover:bg-surface/50 transition-all">
               <div className="flex justify-between items-start mb-8">
-                <div className="w-12 h-12 border border-primary flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                <div className="w-12 h-12 border border-primary rounded-xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
                   <Users size={20} strokeWidth={1} />
                 </div>
                 <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -133,7 +136,7 @@ export default function Customers() {
                 </div>
               </div>
               
-              <h3 className="text-xl font-serif font-bold tracking-tight mb-4 italic">{customer.name}</h3>
+              <h3 className="text-xl font-sans font-black tracking-tight mb-4">{customer.name}</h3>
               
               <div className="space-y-4">
                 {customer.phone && (
@@ -178,11 +181,11 @@ export default function Customers() {
           onClick={() => setIsModalOpen(false)}
         >
           <div 
-            className="bg-white border border-black w-full max-w-xl my-auto shadow-[20px_20px_0px_0px_rgba(0,0,0,0.1)] overflow-hidden animate-in slide-in-from-bottom-8 duration-500"
+            className="bg-white border border-border rounded-3xl w-full max-w-xl my-auto shadow-3xl overflow-hidden animate-in slide-in-from-bottom-8 duration-500"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6 border-b border-border flex items-center justify-between bg-surface/50">
-              <h2 className="text-xl font-serif font-bold italic tracking-tight">{editingCustomer ? 'Edit Customer' : 'Add Customer'}</h2>
+              <h2 className="text-xl font-sans font-black tracking-tight">{editingCustomer ? 'Edit Customer' : 'Add Customer'}</h2>
               <button onClick={() => setIsModalOpen(false)} className="text-muted hover:text-accent transition-colors cursor-pointer"><X size={20} /></button>
             </div>
             
@@ -195,7 +198,7 @@ export default function Customers() {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full h-12 px-6 bg-white border border-border text-[11px] uppercase tracking-widest focus:border-accent focus:outline-none transition-all placeholder:text-muted/30"
+                    className="w-full h-12 px-6 bg-white border border-border rounded-xl text-[11px] uppercase tracking-widest focus:border-accent focus:outline-none transition-all placeholder:text-muted/30 focus:ring-4 focus:ring-accent-soft"
                     placeholder="NAME"
                   />
                 </div>
@@ -207,7 +210,7 @@ export default function Customers() {
                       type="text"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full h-12 px-6 bg-white border border-border text-[11px] uppercase tracking-widest focus:border-accent focus:outline-none transition-all"
+                      className="w-full h-12 px-6 bg-white border border-border rounded-xl text-[11px] uppercase tracking-widest focus:border-accent focus:outline-none transition-all focus:ring-4 focus:ring-accent-soft"
                       placeholder="080..."
                     />
                   </div>
@@ -217,7 +220,7 @@ export default function Customers() {
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full h-12 px-6 bg-white border border-border text-[11px] focus:border-accent focus:outline-none transition-all"
+                      className="w-full h-12 px-6 bg-white border border-border rounded-xl text-[11px] focus:border-accent focus:outline-none transition-all focus:ring-4 focus:ring-accent-soft"
                       placeholder="EMAIL"
                     />
                   </div>
@@ -229,7 +232,7 @@ export default function Customers() {
                     type="number"
                     value={formData.creditLimit}
                     onChange={(e) => setFormData({ ...formData, creditLimit: e.target.value })}
-                    className="w-full h-12 px-6 bg-white border border-border text-sm font-bold text-accent focus:border-accent focus:outline-none transition-all"
+                    className="w-full h-12 px-6 bg-white border border-border rounded-xl text-sm font-bold text-accent focus:border-accent focus:outline-none transition-all focus:ring-4 focus:ring-accent-soft"
                     placeholder="0.00"
                   />
                 </div>
@@ -240,7 +243,7 @@ export default function Customers() {
                     rows={2}
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full px-6 py-3 bg-white border border-border text-[11px] uppercase tracking-widest focus:border-accent focus:outline-none transition-all resize-none"
+                    className="w-full px-6 py-3 bg-white border border-border rounded-xl text-[11px] uppercase tracking-widest focus:border-accent focus:outline-none transition-all resize-none focus:ring-4 focus:ring-accent-soft"
                     placeholder="ADDRESS"
                   />
                 </div>
@@ -250,13 +253,13 @@ export default function Customers() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 h-12 border border-border text-muted hover:text-primary hover:border-primary text-[10px] font-bold uppercase tracking-[0.3em] transition-all cursor-pointer"
+                  className="flex-1 h-12 border border-border rounded-full text-muted hover:text-primary hover:border-primary text-[10px] font-bold uppercase tracking-[0.3em] transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 h-12 craft-btn text-[10px] cursor-pointer"
+                  className="flex-1 h-12 tag-btn text-[10px] cursor-pointer"
                 >
                   {editingCustomer ? 'Save Changes' : 'Save Customer'}
                 </button>

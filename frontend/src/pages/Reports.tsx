@@ -107,16 +107,16 @@ export default function Reports() {
   };
 
   return (
-    <div className="p-4 lg:p-8 max-w-[1600px] mx-auto space-y-8 bg-white font-sans">
+    <div className="p-4 lg:p-8 max-w-[1600px] mx-auto space-y-8 bg-background font-sans">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-black pb-8">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-border pb-8">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-serif font-bold tracking-tighter uppercase leading-none italic">Reports</h1>
-          <p className="text-[10px] text-muted mt-3 uppercase tracking-[0.4em] font-bold italic">Business performance overview</p>
+          <h1 className="text-2xl lg:text-3xl font-sans font-black tracking-tighter uppercase leading-none">Reports</h1>
+          <p className="text-[10px] text-muted mt-3 uppercase tracking-[0.4em] font-bold">Business performance overview</p>
         </div>
         <button 
           onClick={() => window.print()}
-          className="craft-btn h-12 px-8 flex items-center gap-3 text-[10px] print:hidden"
+          className="tag-btn h-12 px-8 flex items-center gap-3 text-[10px] print:hidden cursor-pointer"
         >
           <Download size={18} />
           Print Report
@@ -125,9 +125,9 @@ export default function Reports() {
 
       {/* Inventory Valuation Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="craft-card p-6 bg-surface/30 group">
+        <div className="tag-card p-6 bg-surface/30 group">
           <p className="text-[10px] font-bold text-muted uppercase tracking-[0.3em]">Total Items</p>
-          <h3 className="text-2xl font-serif font-bold italic text-primary mt-4 tracking-tight leading-none">
+          <h3 className="text-2xl font-sans font-black text-primary mt-4 tracking-tight leading-none">
             {data?.inventoryStats.totalItems.toLocaleString()}
           </h3>
           <div className="mt-6 pt-6 border-t border-border flex items-center gap-3">
@@ -136,9 +136,9 @@ export default function Reports() {
           </div>
         </div>
         
-        <div className="craft-card p-6 bg-surface/30 group border-l-4 border-l-primary">
+        <div className="tag-card p-6 bg-surface/30 group">
           <p className="text-[10px] font-bold text-muted uppercase tracking-[0.3em]">Total Value</p>
-          <h3 className="text-2xl font-serif font-bold italic text-primary mt-4 tracking-tight leading-none">
+          <h3 className="text-2xl font-sans font-black text-primary mt-4 tracking-tight leading-none">
             ₦{data?.inventoryStats.totalValue.toLocaleString()}
           </h3>
           <div className="mt-6 pt-6 border-t border-border flex items-center gap-3">
@@ -147,9 +147,9 @@ export default function Reports() {
           </div>
         </div>
 
-        <div className="craft-card p-6 bg-primary group">
+        <div className="tag-card p-6 bg-primary group border-primary">
           <p className="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em]">Total Profit</p>
-          <h3 className="text-2xl font-serif font-bold italic text-white mt-4 tracking-tight leading-none">
+          <h3 className="text-2xl font-sans font-black text-white mt-4 tracking-tight leading-none">
             ₦{(data?.inventoryStats.totalValue! - data?.inventoryStats.totalCost!).toLocaleString()}
           </h3>
           <div className="mt-6 pt-6 border-t border-white/10 flex items-center gap-3">
@@ -216,7 +216,7 @@ export default function Reports() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center text-[10px] font-bold text-muted uppercase tracking-widest">{pm.count} UNITS</td>
-                  <td className="px-6 py-4 text-right font-serif font-bold italic text-primary text-base">₦{pm.amount.toLocaleString()}</td>
+                  <td className="px-6 py-4 text-right font-sans font-black text-primary text-base">₦{pm.amount.toLocaleString()}</td>
                   <td className="px-6 py-4 text-right text-[10px] font-bold text-muted uppercase tracking-widest opacity-40">
                     ₦{(pm.amount / pm.count).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                   </td>

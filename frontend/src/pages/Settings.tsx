@@ -136,26 +136,26 @@ export default function Settings() {
     <div className="p-4 lg:p-8 max-w-[1400px] mx-auto space-y-8 pb-20">
       {/* Toast Notification */}
       {toast && (
-        <div className={`fixed top-12 right-12 z-[100] flex items-center gap-4 px-6 py-4 rounded-none border-l-4 shadow-2xl animate-in slide-in-from-right duration-500 ${
-          toast.type === 'success' ? 'bg-black border-accent text-white' : 'bg-black border-red-500 text-white'
+        <div className={`fixed top-12 right-12 z-[100] flex items-center gap-4 px-6 py-4 rounded-xl border-2 shadow-2xl animate-in slide-in-from-right duration-500 ${
+          toast.type === 'success' ? 'bg-success border-success text-white' : 'bg-accent border-accent text-white'
         }`}>
-          {toast.type === 'success' ? <CheckCircle2 size={18} className="text-accent" /> : <AlertCircle size={18} className="text-red-500" />}
+          {toast.type === 'success' ? <CheckCircle2 size={18} className="text-white" /> : <AlertCircle size={18} className="text-white" />}
           <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{toast.message}</span>
         </div>
       )}
 
-      <header className="border-b border-black pb-6">
-        <h1 className="text-2xl lg:text-3xl font-serif font-bold tracking-tighter uppercase leading-none">Settings</h1>
+      <header className="border-b border-border pb-6">
+        <h1 className="text-2xl lg:text-3xl font-sans font-black tracking-tighter uppercase leading-none">Settings</h1>
         <p className="text-[10px] text-muted mt-3 uppercase tracking-[0.3em] font-bold">App Preferences</p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Sidebar Nav (Desktop) */}
-        <aside className="lg:col-span-3 space-y-1">
+        <aside className="lg:col-span-3 space-y-2">
           <button 
             onClick={() => setActiveTab('profile')}
-            className={`w-full text-left px-5 py-3 text-[10px] uppercase tracking-[0.2em] font-bold flex items-center gap-3 transition-all border ${
-              activeTab === 'profile' ? 'border-black bg-black text-white' : 'border-border text-muted hover:border-black hover:text-primary'
+            className={`w-full text-left px-5 py-3.5 text-[10px] uppercase tracking-[0.2em] font-bold flex items-center gap-3 transition-all border cursor-pointer ${
+              activeTab === 'profile' ? 'border-accent bg-accent-soft text-accent rounded-xl shadow-sm' : 'border-border text-muted hover:border-accent hover:text-primary rounded-xl'
             }`}
           >
             <User size={14} />
@@ -164,8 +164,8 @@ export default function Settings() {
           {isOwnerOrManager && (
             <button 
               onClick={() => setActiveTab('company')}
-              className={`w-full text-left px-5 py-3 text-[10px] uppercase tracking-[0.2em] font-bold flex items-center gap-3 transition-all border ${
-                activeTab === 'company' ? 'border-black bg-black text-white' : 'border-border text-muted hover:border-black hover:text-primary'
+              className={`w-full text-left px-5 py-3.5 text-[10px] uppercase tracking-[0.2em] font-bold flex items-center gap-3 transition-all border cursor-pointer ${
+                activeTab === 'company' ? 'border-accent bg-accent-soft text-accent rounded-xl shadow-sm' : 'border-border text-muted hover:border-accent hover:text-primary rounded-xl'
               }`}
             >
               <Building2 size={14} />
@@ -180,10 +180,10 @@ export default function Settings() {
           {activeTab === 'profile' && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
               {/* Profile Section */}
-              <section className="craft-card overflow-hidden">
+              <section className="tag-card overflow-hidden">
                 <div className="px-6 py-4 border-b border-border flex items-center gap-3 bg-surface/30">
                   <User size={16} className="text-accent" />
-                  <h2 className="font-serif text-lg font-bold italic">Profile</h2>
+                  <h2 className="font-sans text-lg font-black">Profile</h2>
                 </div>
                 <form onSubmit={handleProfileSubmit} className="p-6 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -194,7 +194,7 @@ export default function Settings() {
                         value={profileName}
                         onChange={(e) => setProfileName(e.target.value)}
                         required
-                        className="w-full px-4 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider"
+                        className="w-full px-4 py-3 bg-white border border-border rounded-xl focus:border-accent focus:ring-4 focus:ring-accent-soft outline-none transition-all text-xs tracking-wider"
                       />
                     </div>
                     <div className="space-y-2">
@@ -204,7 +204,7 @@ export default function Settings() {
                         value={profileEmail}
                         onChange={(e) => setProfileEmail(e.target.value)}
                         required
-                        className="w-full px-4 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider"
+                        className="w-full px-4 py-3 bg-white border border-border rounded-xl focus:border-accent focus:ring-4 focus:ring-accent-soft outline-none transition-all text-xs tracking-wider"
                       />
                     </div>
                   </div>
@@ -212,7 +212,7 @@ export default function Settings() {
                     <button 
                       type="submit"
                       disabled={updateProfile.isPending}
-                      className="craft-btn flex items-center gap-3 text-[10px] disabled:opacity-30"
+                      className="tag-btn flex items-center gap-3 text-[10px] disabled:opacity-30 cursor-pointer"
                     >
                       {updateProfile.isPending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                       Save Settings
@@ -222,10 +222,10 @@ export default function Settings() {
               </section>
 
               {/* Password Section */}
-              <section className="craft-card overflow-hidden">
+              <section className="tag-card overflow-hidden">
                 <div className="px-6 py-4 border-b border-border flex items-center gap-3 bg-surface/30">
                   <Lock size={16} className="text-accent" />
-                  <h2 className="font-serif text-lg font-bold italic">Security</h2>
+                  <h2 className="font-sans text-lg font-black">Security</h2>
                 </div>
                 <form onSubmit={handlePasswordSubmit} className="p-6 space-y-6">
                   <div className="space-y-2">
@@ -236,7 +236,7 @@ export default function Settings() {
                         value={oldPassword}
                         onChange={(e) => setOldPassword(e.target.value)}
                         required
-                        className="w-full pl-4 pr-12 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider"
+                        className="w-full pl-4 pr-12 py-3 bg-white border border-border rounded-xl focus:border-accent focus:ring-4 focus:ring-accent-soft outline-none transition-all text-xs tracking-wider"
                       />
                       <button
                         type="button"
@@ -256,7 +256,7 @@ export default function Settings() {
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
                           required
-                          className="w-full pl-4 pr-12 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider"
+                          className="w-full pl-4 pr-12 py-3 bg-white border border-border rounded-xl focus:border-accent focus:ring-4 focus:ring-accent-soft outline-none transition-all text-xs tracking-wider"
                         />
                         <button
                           type="button"
@@ -275,7 +275,7 @@ export default function Settings() {
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           required
-                          className="w-full pl-4 pr-12 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider"
+                          className="w-full pl-4 pr-12 py-3 bg-white border border-border rounded-xl focus:border-accent focus:ring-4 focus:ring-accent-soft outline-none transition-all text-xs tracking-wider"
                         />
                         <button
                           type="button"
@@ -304,10 +304,10 @@ export default function Settings() {
 
           {activeTab === 'company' && isOwnerOrManager && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <section className="craft-card overflow-hidden">
+              <section className="tag-card overflow-hidden">
                 <div className="px-6 py-4 border-b border-border flex items-center gap-3 bg-surface/30">
                   <Building2 size={16} className="text-accent" />
-                  <h2 className="font-serif text-lg font-bold italic">Company Details</h2>
+                  <h2 className="font-sans text-lg font-black">Company Details</h2>
                 </div>
                 {loadingCompany ? (
                   <FullPageLoader message="Loading Company Data..." />
@@ -320,7 +320,7 @@ export default function Settings() {
                         <label className="text-[9px] font-bold text-muted uppercase tracking-[0.2em] block">Company Logo</label>
                         <div 
                           onClick={() => fileInputRef.current?.click()}
-                          className="w-32 h-32 border border-border bg-white flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-accent group relative transition-all"
+                          className="w-32 h-32 border border-border bg-white rounded-2xl flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-accent group relative transition-all"
                         >
                           {companyLogo ? (
                             <>
@@ -355,7 +355,7 @@ export default function Settings() {
                             value={companyName}
                             onChange={(e) => setCompanyName(e.target.value)}
                             required
-                            className="w-full px-4 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider"
+                            className="w-full px-4 py-3 bg-white border border-border rounded-xl focus:border-accent focus:ring-4 focus:ring-accent-soft outline-none transition-all text-xs tracking-wider"
                           />
                         </div>
                         <div className="space-y-2">
@@ -365,7 +365,7 @@ export default function Settings() {
                             placeholder="e.g. © 2024 Your Corporate Entity"
                             value={copyrightText}
                             onChange={(e) => setCopyrightText(e.target.value)}
-                            className="w-full px-4 py-3 bg-white border border-border focus:border-black outline-none transition-all text-xs tracking-wider italic"
+                            className="w-full px-4 py-3 bg-white border border-border rounded-xl focus:border-accent focus:ring-4 focus:ring-accent-soft outline-none transition-all text-xs tracking-wider"
                           />
                         </div>
                       </div>
@@ -375,7 +375,7 @@ export default function Settings() {
                       <button 
                         type="submit"
                         disabled={updateCompany.isPending}
-                        className="craft-btn flex items-center gap-3 text-[10px] disabled:opacity-30"
+                        className="tag-btn flex items-center gap-3 text-[10px] disabled:opacity-30 cursor-pointer"
                       >
                         {updateCompany.isPending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                         Save Company Settings

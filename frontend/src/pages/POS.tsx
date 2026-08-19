@@ -25,9 +25,11 @@ import ReceiptModal from '../components/ReceiptModal';
 import FullPageLoader from '../components/FullPageLoader';
 import AnimatedPage from '../components/AnimatedPage';
 import type { Sale, Customer, Product, Category } from '../types';
+import { useDialogStore } from '../store/dialogStore';
 
 
 export default function POS() {
+  const { showAlert } = useDialogStore();
   const { data: products, isLoading: productsLoading } = useProducts();
   const { data: categories } = useCategories();
   const { data: customers, createCustomer } = useCustomers();
@@ -83,13 +85,13 @@ export default function POS() {
     if (paymentMethod === 'CASH') {
       const received = parseFloat(amountReceived);
       if (isNaN(received) || received < cartTotal) {
-        alert('Insufficient cash amount received.');
+        await showAlert('Insufficient cash amount received.', 'Checkout Notice', 'alert');
         return;
       }
     }
 
     if (paymentMethod === 'CREDIT' && !selectedCustomer && !customerName.trim()) {
-      alert('Customer selection is required for credit sales.');
+      await showAlert('Customer selection is required for credit sales.', 'Checkout Notice', 'alert');
       return;
     }
     
@@ -123,7 +125,7 @@ export default function POS() {
       clearCart();
       resetCheckoutState();
     } catch (error) {
-      alert('Failed to process sale. Please check stock levels or database connection.');
+      await showAlert('Failed to process sale. Please check stock levels or database connection.', 'Checkout Error', 'alert');
     }
   };
 
@@ -151,7 +153,7 @@ export default function POS() {
   };
 
   return (
-    <AnimatedPage className="flex flex-col h-[calc(100vh-10px)] bg-white font-sans overflow-hidden">
+    <AnimatedPage className="flex flex-col h-[calc(100vh-10px)] bg-background font-sans overflow-hidden">
       {createSale.isPending && <LoadingOverlay message="Processing Payment..." />}
       
       <AnimatePresence>
@@ -167,11 +169,11 @@ export default function POS() {
       </AnimatePresence>
 
       {/* Fixed Header with Step Indicator */}
-      <div className="flex-shrink-0 border-b border-black p-6 lg:p-10 bg-white z-30">
+      <div className="flex-shrink-0 border-b border-border p-6 lg:p-10 bg-background/80 backdrop-blur-md z-30">
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div>
-            <h1 className="text-3xl font-serif font-bold tracking-tighter uppercase leading-none italic">Point of Sale</h1>
-            <p className="text-[9px] text-muted mt-3 uppercase tracking-[0.5em] font-bold opacity-60 italic">Step {currentStep}</p>
+            <h1 className="text-3xl font-sans font-black tracking-tighter uppercase leading-none">Point of Sale</h1>
+            <p className="text-[9px] text-muted mt-3 uppercase tracking-[0.5em] font-bold opacity-60">Step {currentStep}</p>
           </div>
 
           {/* Step Indicator */}
@@ -230,7 +232,7 @@ export default function POS() {
                 <div className="w-full max-w-2xl space-y-16">
                   <div className="text-center space-y-6">
                      <User className="mx-auto text-accent mb-8" size={56} strokeWidth={0.5} />
-                     <h2 className="text-4xl font-serif font-bold italic uppercase tracking-tighter">Select Customer</h2>
+                     <h2 className="text-4xl font-sans font-black uppercase tracking-tighter">Select Customer</h2>
                      <p className="text-[10px] text-muted uppercase tracking-[0.4em] font-bold opacity-60">Choose or create a customer for this sale</p>
                   </div>
 
@@ -389,13 +391,13 @@ export default function POS() {
                           placeholder="Search products..."
                           value={searchTerm}
                           onChange={(e) => setSearchTerm(e.target.value)}
-                          className="w-full h-14 pl-20 pr-8 bg-white border border-border text-[11px] uppercase tracking-[0.2em] focus:border-accent focus:outline-none transition-all placeholder:text-muted/20"
+                          className="w-full h-14 pl-20 pr-8 bg-white border border-border rounded-2xl text-[11px] uppercase tracking-[0.2em] focus:border-accent focus:outline-none transition-all placeholder:text-muted/20 focus:ring-4 focus:ring-accent-soft"
                         />
                       </div>
                       <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                         <button
                           onClick={() => setSelectedCategory('all')}
-                          className={`px-8 h-14 border text-[10px] font-bold uppercase tracking-[0.2em] whitespace-nowrap transition-all ${
+                          className={`px-8 h-12 border text-[10px] font-bold uppercase tracking-[0.2em] rounded-full whitespace-nowrap transition-all ${
                             selectedCategory === 'all' ? 'bg-primary border-primary text-white shadow-lg' : 'bg-white border-border text-muted hover:border-primary'
                           }`}
                         >
@@ -405,7 +407,7 @@ export default function POS() {
                           <button
                             key={cat.id}
                             onClick={() => setSelectedCategory(cat.id)}
-                            className={`px-8 h-14 border text-[10px] font-bold uppercase tracking-[0.2em] whitespace-nowrap transition-all ${
+                            className={`px-8 h-12 border text-[10px] font-bold uppercase tracking-[0.2em] rounded-full whitespace-nowrap transition-all ${
                               selectedCategory === cat.id ? 'bg-primary border-primary text-white shadow-lg' : 'bg-white border-border text-muted hover:border-primary'
                             }`}
                           >
@@ -430,9 +432,9 @@ export default function POS() {
                           key={product.id}
                           disabled={isOutOfStock}
                           onClick={() => addItem(product)}
-                          whileHover={isOutOfStock ? {} : { y: -5, borderColor: 'var(--color-accent)' }}
-                          whileTap={isOutOfStock ? {} : { scale: 0.95 }}
-                          className={`flex flex-col text-left bg-white border craft-card p-6 group relative transition-all ${
+                          whileHover={isOutOfStock ? {} : { y: -5, scale: 1.02 }}
+                          whileTap={isOutOfStock ? {} : { scale: 0.98 }}
+                          className={`flex flex-col text-left bg-white border tag-card p-6 group relative transition-all ${
                             isOutOfStock ? 'opacity-30 grayscale cursor-not-allowed border-border' : 'border-border cursor-pointer shadow-sm'
                           }`}
                         >
@@ -440,18 +442,18 @@ export default function POS() {
                             <motion.div 
                               initial={{ scale: 0 }}
                               animate={{ scale: 1 }}
-                              className="absolute top-4 right-4 w-10 h-10 bg-accent text-white flex items-center justify-center text-[11px] font-bold z-10 border-4 border-white shadow-lg"
+                              className="absolute top-4 right-4 w-10 h-10 bg-accent text-white flex items-center justify-center text-[11px] font-bold z-10 border-4 border-white rounded-full shadow-lg"
                             >
                               {inCart.quantity}
                             </motion.div>
                           )}
-                          <div className="aspect-square border border-surface bg-surface/50 flex items-center justify-center text-muted group-hover:text-accent transition-colors mb-6 overflow-hidden">
+                          <div className="aspect-square border border-surface bg-surface/50 flex items-center justify-center text-muted group-hover:text-accent transition-colors mb-6 overflow-hidden rounded-xl">
                              <ShoppingCart size={48} strokeWidth={0.5} className="group-hover:scale-110 transition-transform duration-500" />
                           </div>
                           <div className="space-y-4">
                             <h3 className="text-[11px] font-bold uppercase tracking-widest text-primary leading-snug h-10 overflow-hidden line-clamp-2">{product.name}</h3>
                             <div className="pt-4 border-t border-border flex items-center justify-between">
-                              <span className="text-sm font-serif font-bold italic text-primary">₦{Number(product.price).toLocaleString()}</span>
+                              <span className="text-sm font-sans font-extrabold text-primary">₦{Number(product.price).toLocaleString()}</span>
                               <span className="text-[9px] font-bold text-muted opacity-40">{product.stockLevel} ITEMS</span>
                             </div>
                           </div>
@@ -462,9 +464,9 @@ export default function POS() {
                 </div>
 
                 {/* Cart Summary */}
-                <div className="w-full lg:w-[400px] bg-white border-l border-black flex flex-col shadow-2xl">
-                  <div className="p-8 border-b border-black flex items-center justify-between bg-surface/50">
-                    <h3 className="text-sm font-serif font-bold italic uppercase tracking-tighter">Shopping Cart</h3>
+                <div className="w-full lg:w-[400px] bg-surface border-l border-border flex flex-col shadow-2xl">
+                  <div className="p-8 border-b border-border flex items-center justify-between bg-surface/50">
+                    <h3 className="text-sm font-sans font-black uppercase tracking-tighter">Shopping Cart</h3>
                     <button onClick={clearCart} className="text-[9px] font-bold uppercase text-muted hover:text-accent tracking-[0.3em] transition-colors">Clear All</button>
                   </div>
                   <div className="flex-1 overflow-y-auto p-8 space-y-6 no-scrollbar">
@@ -481,7 +483,7 @@ export default function POS() {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: 20 }}
-                            className="p-5 border border-border bg-white space-y-4 group hover:border-primary transition-colors"
+                            className="p-5 border border-border bg-white rounded-xl space-y-4 group hover:border-accent transition-all hover:shadow-md"
                           >
                             <div className="flex justify-between items-start">
                               <h4 className="text-[11px] font-bold uppercase tracking-widest text-primary truncate flex-1">{item.product.name}</h4>
@@ -489,21 +491,21 @@ export default function POS() {
                             </div>
                             <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em]">
                                <div className="flex items-center gap-5">
-                                  <button onClick={() => updateQuantity(item.product.id, Math.max(0, item.quantity - 1))} className="w-6 h-6 flex items-center justify-center hover:bg-surface transition-colors border border-transparent hover:border-border"><Minus size={12} /></button>
+                                  <button onClick={() => updateQuantity(item.product.id, Math.max(0, item.quantity - 1))} className="w-6 h-6 flex items-center justify-center hover:bg-surface transition-colors border border-transparent hover:border-border rounded-md"><Minus size={12} /></button>
                                   <span className="min-w-[20px] text-center">{item.quantity}</span>
-                                  <button onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="w-6 h-6 flex items-center justify-center hover:bg-surface transition-colors border border-transparent hover:border-border"><Plus size={12} /></button>
+                                  <button onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="w-6 h-6 flex items-center justify-center hover:bg-surface transition-colors border border-transparent hover:border-border rounded-md"><Plus size={12} /></button>
                                </div>
-                               <span className="text-primary font-serif italic text-sm">₦{(item.quantity * Number(item.product.price)).toLocaleString()}</span>
+                               <span className="text-primary font-sans font-bold text-sm">₦{(item.quantity * Number(item.product.price)).toLocaleString()}</span>
                             </div>
                           </motion.div>
                         ))}
                       </AnimatePresence>
                     )}
                   </div>
-                  <div className="p-10 border-t border-black bg-surface">
+                  <div className="p-10 border-t border-border bg-surface">
                      <div className="flex justify-between items-end">
                         <span className="text-[10px] font-bold text-muted uppercase tracking-[0.4em] opacity-60">Grand Total</span>
-                        <span className="text-3xl font-serif font-bold italic text-primary tracking-tighter">₦{cartTotal.toLocaleString()}</span>
+                        <span className="text-3xl font-sans font-black text-primary tracking-tighter">₦{cartTotal.toLocaleString()}</span>
                      </div>
                   </div>
                 </div>
@@ -521,9 +523,8 @@ export default function POS() {
                 className="flex-1 flex flex-col items-center justify-center p-8 lg:p-20"
               >
                  <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-24">
-                    {/* Order Review */}
-                    <div className="space-y-12">
-                      <h3 className="text-3xl font-serif font-bold italic uppercase tracking-tighter border-b border-black pb-8">Order Summary</h3>
+                    {/* Order Review                    <div className="space-y-12">
+                      <h3 className="text-3xl font-sans font-black uppercase tracking-tighter border-b border-border pb-8">Order Summary</h3>
                       <div className="space-y-6 max-h-[450px] overflow-y-auto no-scrollbar pr-6">
                         {items.map(item => (
                           <div key={item.product.id} className="flex justify-between items-center py-5 border-b border-border border-dashed">
@@ -531,7 +532,7 @@ export default function POS() {
                               <p className="text-[12px] font-bold uppercase tracking-widest">{item.product.name}</p>
                               <p className="text-[10px] text-muted font-bold uppercase mt-2 opacity-60">{item.quantity} QTY @ ₦{Number(item.product.price).toLocaleString()}</p>
                             </div>
-                            <span className="text-sm font-serif font-bold italic">₦{(item.quantity * Number(item.product.price)).toLocaleString()}</span>
+                            <span className="text-sm font-sans font-bold">₦{(item.quantity * Number(item.product.price)).toLocaleString()}</span>
                           </div>
                         ))}
                       </div>
@@ -540,7 +541,7 @@ export default function POS() {
                             <span>Total Items</span>
                             <span>{items.reduce((acc, i) => acc + i.quantity, 0)} Units</span>
                          </div>
-                         <div className="flex justify-between text-primary text-3xl font-serif font-bold italic pt-8 border-t border-black tracking-tighter">
+                         <div className="flex justify-between text-primary text-3xl font-sans font-black pt-8 border-t border-border tracking-tighter">
                             <span>Grand Total</span>
                             <span>₦{cartTotal.toLocaleString()}</span>
                          </div>
@@ -549,7 +550,7 @@ export default function POS() {
 
                     {/* Payment Details */}
                     <div className="space-y-12">
-                      <h3 className="text-3xl font-serif font-bold italic uppercase tracking-tighter border-b border-black pb-8">Payment Method</h3>
+                      <h3 className="text-3xl font-sans font-black uppercase tracking-tighter border-b border-border pb-8">Payment Method</h3>
                       <div className="grid grid-cols-2 gap-6">
                         {[
                           { id: 'CASH', label: 'Cash', icon: Banknote },
@@ -562,10 +563,10 @@ export default function POS() {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setPaymentMethod(method.id as any)}
-                            className={`h-24 flex flex-col items-center justify-center gap-4 border transition-all ${
+                            className={`h-24 flex flex-col items-center justify-center gap-4 border rounded-2xl transition-all cursor-pointer ${
                               paymentMethod === method.id 
                                 ? 'bg-primary border-primary text-white shadow-2xl' 
-                                : 'bg-white border-border text-muted hover:border-black hover:text-primary'
+                                : 'bg-white border-border text-muted hover:border-accent hover:text-primary'
                             }`}
                           >
                             <method.icon size={24} strokeWidth={1} />
@@ -582,7 +583,7 @@ export default function POS() {
                             exit={{ opacity: 0, height: 0 }}
                             className="overflow-hidden"
                           >
-                            <div className="p-10 border border-accent bg-accent-soft/30 space-y-8">
+                            <div className="p-10 border border-accent bg-accent-soft/30 rounded-2xl space-y-8">
                                <div className="flex items-center justify-between">
                                   <label className="text-[10px] font-bold text-accent/60 uppercase tracking-[0.3em]">Amount Received</label>
                                   <input
@@ -590,21 +591,21 @@ export default function POS() {
                                     placeholder="0.00"
                                     value={amountReceived}
                                     onChange={(e) => setAmountReceived(e.target.value)}
-                                    className="w-48 h-16 bg-white border border-accent px-8 text-2xl font-serif font-bold italic text-accent focus:outline-none placeholder:opacity-20"
+                                    className="w-48 h-16 bg-white border border-accent rounded-xl px-8 text-2xl font-sans font-bold text-accent focus:outline-none placeholder:opacity-20"
                                   />
-                               </div>
-                               <div className="flex items-center justify-between pt-8 border-t border-accent/20">
-                                  <label className="text-[10px] font-bold text-accent/60 uppercase tracking-[0.3em]">Change Amount</label>
-                                  <span className="text-3xl font-serif font-bold italic text-accent tracking-tighter">₦{change.toLocaleString()}</span>
                                 </div>
+                                <div className="flex items-center justify-between pt-8 border-t border-accent/20">
+                                   <label className="text-[10px] font-bold text-accent/60 uppercase tracking-[0.3em]">Change Amount</label>
+                                   <span className="text-3xl font-sans font-black text-accent tracking-tighter">₦{change.toLocaleString()}</span>
+                                 </div>
                             </div>
                           </motion.div>
                         )}
                       </AnimatePresence>
 
-                      <div className="p-8 border border-black bg-surface/50">
+                      <div className="p-8 border border-border bg-surface/50 rounded-2xl">
                          <div className="flex items-center gap-6">
-                            <div className="w-12 h-12 border border-black flex items-center justify-center bg-white">
+                            <div className="w-12 h-12 border border-border rounded-xl flex items-center justify-center bg-white">
                                <User size={20} strokeWidth={1} className="text-primary" />
                             </div>
                             <div>
@@ -624,14 +625,14 @@ export default function POS() {
       </div>
 
       {/* Fixed Footer Navigation */}
-      <div className="flex-shrink-0 border-t border-black p-8 lg:p-10 bg-white z-30 shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.1)]">
+      <div className="flex-shrink-0 border-t border-border p-8 lg:p-10 bg-background z-30 shadow-lg">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between">
           <motion.button
             whileHover={{ x: -4 }}
             onClick={() => setCurrentStep(prev => Math.max(1, prev - 1))}
             disabled={currentStep === 1}
-            className={`flex items-center gap-4 px-10 h-14 text-[10px] font-bold uppercase tracking-[0.4em] border border-black transition-all ${
-              currentStep === 1 ? 'opacity-0 pointer-events-none' : 'hover:bg-black hover:text-white'
+            className={`flex items-center gap-4 px-10 h-14 text-[10px] font-bold uppercase tracking-[0.4em] border border-border rounded-full transition-all ${
+              currentStep === 1 ? 'opacity-0 pointer-events-none' : 'hover:bg-black hover:text-white cursor-pointer'
             }`}
           >
             <ChevronDown className="rotate-90" size={18} />
@@ -641,16 +642,16 @@ export default function POS() {
           <div className="flex items-center gap-12">
             <div className="hidden lg:flex flex-col items-end">
                <span className="text-[10px] text-muted font-bold uppercase tracking-[0.5em] opacity-40">Total</span>
-               <span className="text-3xl font-serif font-bold italic tracking-tighter">₦{cartTotal.toLocaleString()}</span>
+               <span className="text-3xl font-sans font-black tracking-tighter">₦{cartTotal.toLocaleString()}</span>
             </div>
             
             {currentStep < 3 ? (
               <motion.button
-                whileHover={{ scale: 1.02, backgroundColor: 'var(--color-accent)' }}
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setCurrentStep(prev => prev + 1)}
                 disabled={currentStep === 1 ? !canGoToStep2 : !canGoToStep3}
-                className="flex items-center gap-8 px-16 h-14 bg-black text-white text-[10px] font-bold uppercase tracking-[0.5em] transition-all disabled:opacity-10 shadow-2xl"
+                className="flex items-center gap-8 px-16 h-14 bg-primary text-white text-[10px] font-bold uppercase tracking-[0.5em] transition-all disabled:opacity-10 shadow-2xl rounded-full cursor-pointer"
               >
                 Next: {steps.find(s => s.id === currentStep + 1)?.title}
                 <ChevronDown className="-rotate-90" size={18} />
@@ -662,7 +663,7 @@ export default function POS() {
                 onClick={handleCheckout}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-8 px-16 h-14 bg-primary text-white text-[10px] font-bold uppercase tracking-[0.5em] transition-all disabled:opacity-10 shadow-2xl"
+                className="flex items-center gap-8 px-16 h-14 bg-primary text-white text-[10px] font-bold uppercase tracking-[0.5em] transition-all disabled:opacity-10 shadow-2xl rounded-full cursor-pointer"
               >
                 {createSale.isPending ? <Loader2 className="animate-spin" size={18} /> : <Check size={18} />}
                 Complete Sale

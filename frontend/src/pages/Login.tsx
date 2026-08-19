@@ -52,7 +52,7 @@ export default function Login() {
   };
 
   return (
-    <AnimatedPage className="min-h-screen bg-white flex flex-col items-center justify-center p-8 relative overflow-hidden font-sans">
+    <AnimatedPage className="min-h-screen bg-background flex flex-col items-center justify-center p-8 relative overflow-hidden font-sans">
       {/* Editorial Background Element */}
       <motion.div 
         initial={{ opacity: 0, scale: 1.1 }}
@@ -60,7 +60,7 @@ export default function Login() {
         transition={{ duration: 2, ease: "easeOut" }}
         className="absolute top-0 right-0 p-12 pointer-events-none select-none"
       >
-        <h1 className="font-serif text-[25vw] font-bold leading-none tracking-tighter uppercase italic">Login</h1>
+        <h1 className="font-sans text-[25vw] font-black leading-none tracking-tighter uppercase">Login</h1>
       </motion.div>
 
       <motion.div 
@@ -70,18 +70,18 @@ export default function Login() {
         className="w-full max-w-sm relative z-10"
       >
         {/* Logo Section */}
-        <motion.div variants={item} className="text-left mb-16 border-b border-black pb-10">
+        <motion.div variants={item} className="text-left mb-16 border-b border-border pb-10">
           <div className="flex items-center gap-4 mb-10 group cursor-default">
             <motion.div 
               whileHover={{ rotate: 90, backgroundColor: "var(--color-accent)", borderColor: "var(--color-accent)" }}
-              className="w-14 h-14 border-2 border-black flex items-center justify-center transition-all duration-700"
+              className="w-14 h-14 border-2 border-black rounded-2xl flex items-center justify-center transition-all duration-700"
             >
                <Package size={28} className="text-black group-hover:text-white transition-colors" />
             </motion.div>
-            <h2 className="font-serif text-4xl font-bold tracking-tighter uppercase italic">Mnemos</h2>
+            <h2 className="font-sans text-4xl font-black tracking-tighter uppercase">Mnemos</h2>
           </div>
-          <h1 className="text-6xl font-serif font-bold tracking-tighter uppercase leading-none italic text-primary">Login</h1>
-          <p className="text-[10px] text-muted mt-6 uppercase tracking-[0.5em] font-bold opacity-40 italic">Secure Access v1.0</p>
+          <h1 className="text-6xl font-sans font-black tracking-tighter uppercase leading-none text-primary">Login</h1>
+          <p className="text-[10px] text-muted mt-6 uppercase tracking-[0.5em] font-bold opacity-40">Secure Access v1.0</p>
         </motion.div>
 
         {/* Login Form */}
@@ -90,7 +90,7 @@ export default function Login() {
             <motion.div 
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className="border-l-4 border-accent bg-accent-soft/30 p-5 text-[10px] font-bold uppercase tracking-widest text-accent"
+              className="border border-accent/20 bg-accent-soft/30 rounded-xl p-5 text-[10px] font-bold uppercase tracking-widest text-accent"
             >
               Login Error: {typeof error === 'string' ? error : 'Authorization Denied'}
             </motion.div>
@@ -106,7 +106,7 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="email@example.com"
-                  className="w-full px-6 py-5 bg-surface border border-border focus:border-black outline-none transition-all text-xs tracking-[0.2em] uppercase font-bold placeholder:opacity-20"
+                  className="w-full px-6 py-5 bg-surface border border-border rounded-xl focus:border-accent focus:ring-4 focus:ring-accent-soft outline-none transition-all text-xs tracking-[0.2em] uppercase font-bold placeholder:opacity-20"
                 />
               </div>
             </div>
@@ -120,12 +120,12 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-6 py-5 bg-surface border border-border focus:border-black outline-none transition-all text-xs tracking-widest font-bold placeholder:opacity-20 pr-16"
+                  className="w-full px-6 py-5 bg-surface border border-border rounded-xl focus:border-accent focus:ring-4 focus:ring-accent-soft outline-none transition-all text-xs tracking-widest font-bold placeholder:opacity-20 pr-16"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-6 top-1/2 -translate-y-1/2 text-muted/40 hover:text-black transition-colors"
+                  className="absolute right-6 top-1/2 -translate-y-1/2 text-muted/40 hover:text-black transition-colors cursor-pointer"
                 >
                   {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
                 </button>
@@ -137,16 +137,16 @@ export default function Login() {
             variants={item}
             type="submit"
             disabled={isLoading}
-            whileHover={{ scale: 1.02, backgroundColor: "var(--color-accent)" }}
+            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full py-7 bg-black text-white font-bold uppercase tracking-[0.6em] text-[10px] transition-all duration-700 flex items-center justify-center gap-6 group active:scale-[0.98] disabled:opacity-20 cursor-pointer shadow-2xl"
+            className="w-full py-5 bg-primary text-white font-bold uppercase tracking-[0.4em] text-[10px] rounded-full transition-all duration-300 flex items-center justify-center gap-6 group hover:bg-accent hover:shadow-accent active:scale-[0.98] disabled:opacity-20 cursor-pointer shadow-2xl"
           >
             {isLoading ? (
               <Loader2 size={24} className="animate-spin" />
             ) : (
               <>
                 <span>Sign In</span>
-                <ArrowRight size={20} className="group-hover:translate-x-3 transition-transform duration-700" />
+                <ArrowRight size={20} className="group-hover:translate-x-3 transition-transform duration-300" />
               </>
             )}
           </motion.button>
@@ -159,12 +159,12 @@ export default function Login() {
         </motion.div>
 
         {/* Footer */}
-        <motion.div variants={item} className="mt-20 flex justify-between items-center opacity-20">
-           <div className="h-px bg-black flex-1 mr-6" />
-           <p className="text-[9px] font-bold uppercase tracking-[0.5em] whitespace-nowrap italic">
+        <motion.div variants={item} className="mt-20 flex justify-between items-center opacity-30">
+           <div className="h-px bg-border flex-1 mr-6" />
+           <p className="text-[9px] font-bold uppercase tracking-[0.5em] whitespace-nowrap">
              Mnemos System — 2026
            </p>
-           <div className="h-px bg-black flex-1 ml-6" />
+           <div className="h-px bg-border flex-1 ml-6" />
         </motion.div>
       </motion.div>
     </AnimatedPage>

@@ -107,24 +107,24 @@ export default function Dashboard() {
   };
 
   return (
-    <AnimatedPage className="p-4 lg:p-8 space-y-12 max-w-[1600px] mx-auto bg-white">
+    <AnimatedPage className="p-4 lg:p-8 space-y-12 max-w-[1600px] mx-auto bg-background">
       {/* Header */}
-      <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-black pb-10">
+      <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-border pb-10">
         <div>
-          <h1 className="text-3xl lg:text-4xl font-serif font-bold tracking-tighter uppercase leading-none italic">Overview</h1>
+          <h1 className="text-3xl lg:text-4xl font-sans font-black tracking-tighter uppercase leading-none">Overview</h1>
           <p className="text-[10px] text-muted mt-4 uppercase tracking-[0.4em] font-bold opacity-60">Dashboard — {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
         </div>
         <div className="flex gap-4">
           <Link 
             to="/pos"
-            className="craft-btn flex items-center gap-3 px-8"
+            className="tag-btn flex items-center gap-3 px-8"
           >
             <Plus size={16} />
             New Sale
           </Link>
           <Link 
             to="/products"
-            className="h-12 border border-primary text-primary hover:text-accent hover:border-accent transition-all text-[10px] uppercase tracking-[0.2em] font-bold flex items-center gap-3 px-8"
+            className="h-12 border border-primary text-primary hover:text-accent hover:border-accent transition-all text-[10px] uppercase tracking-[0.2em] font-bold flex items-center gap-3 px-8 rounded-full"
           >
             <Package size={16} />
             Inventory
@@ -137,7 +137,7 @@ export default function Dashboard() {
         variants={container}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 border border-black divide-x divide-y md:divide-y-0 divide-black overflow-hidden"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 overflow-hidden"
       >
         <KpiCard 
           title="Revenue" 
@@ -164,10 +164,10 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
         {/* Main Chart */}
-        <motion.div variants={item} className="lg:col-span-2 craft-card p-8">
+        <motion.div variants={item} className="lg:col-span-2 tag-card p-8">
           <div className="flex items-center justify-between mb-10">
-            <h2 className="text-xl font-serif font-bold italic tracking-tight">Sales Revenue</h2>
-            <span className="text-[10px] font-bold text-accent uppercase tracking-[0.3em] bg-accent-soft px-3 py-1">Last 7 Days</span>
+            <h2 className="text-xl font-sans font-extrabold tracking-tight">Sales Revenue</h2>
+            <span className="text-[10px] font-bold text-accent uppercase tracking-[0.3em] bg-accent-soft px-4 py-1.5 rounded-full">Last 7 Days</span>
           </div>
           <div className="h-[350px]">
             <Chart 
@@ -180,8 +180,8 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Top Selling Products */}
-        <motion.div variants={item} className="craft-card p-8 bg-surface/30">
-          <h2 className="text-xl font-serif font-bold italic tracking-tight mb-10">Top Products</h2>
+        <motion.div variants={item} className="tag-card p-8 bg-surface/30">
+          <h2 className="text-xl font-sans font-extrabold tracking-tight mb-10">Top Products</h2>
           <div className="space-y-8">
             {data?.topProducts.map((product, i) => (
               <motion.div 
@@ -189,7 +189,7 @@ export default function Dashboard() {
                 whileHover={{ x: 5 }}
                 className="flex items-center gap-6 group cursor-default"
               >
-                <div className="font-serif text-3xl font-bold text-muted/10 group-hover:text-accent transition-colors">
+                <div className="font-sans text-3xl font-black text-muted/10 group-hover:text-accent transition-colors">
                   {String(i + 1).padStart(2, '0')}
                 </div>
                 <div className="flex-1">
@@ -197,7 +197,7 @@ export default function Dashboard() {
                   <p className="text-[9px] text-muted mt-2 font-bold opacity-60 uppercase">{product.quantity} sold</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold font-serif italic">₦{product.revenue.toLocaleString()}</p>
+                  <p className="text-sm font-bold font-sans">₦{product.revenue.toLocaleString()}</p>
                 </div>
               </motion.div>
             ))}
@@ -207,9 +207,9 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         {/* Recent Sales Table */}
-        <motion.div variants={item} className="craft-card overflow-hidden">
+        <motion.div variants={item} className="tag-card overflow-hidden">
           <div className="p-8 border-b border-border flex items-center justify-between bg-surface/50">
-            <h2 className="text-xl font-serif font-bold italic tracking-tight">Latest Transactions</h2>
+            <h2 className="text-xl font-sans font-extrabold tracking-tight">Latest Transactions</h2>
             <Link to="/sales" className="text-[10px] text-accent hover:text-primary transition-colors flex items-center gap-2 font-bold uppercase tracking-[0.2em]">
               View All <ArrowRight size={14} />
             </Link>
@@ -234,7 +234,7 @@ export default function Dashboard() {
                       <div className="text-[11px] font-bold uppercase tracking-tight">{sale.customerName || 'Guest'}</div>
                       <div className="text-[9px] text-accent mt-1 font-bold uppercase tracking-[0.2em] opacity-80">{sale.paymentMethod}</div>
                     </td>
-                    <td className="px-8 py-5 whitespace-nowrap text-right text-xs font-serif font-bold italic">
+                    <td className="px-8 py-5 whitespace-nowrap text-right text-xs font-sans font-bold">
                       ₦{Number(sale.totalAmount).toLocaleString()}
                     </td>
                     <td className="px-8 py-5 whitespace-nowrap text-center">
@@ -251,11 +251,11 @@ export default function Dashboard() {
 
         {/* Alerts / Activity */}
         <motion.div variants={item} className="space-y-12">
-          <div className="craft-card p-10 bg-white">
-            <h2 className="text-2xl font-serif font-bold italic tracking-tight mb-12">Alerts</h2>
+          <div className="tag-card p-10 bg-white">
+            <h2 className="text-2xl font-sans font-extrabold tracking-tight mb-12">Alerts</h2>
             <div className="space-y-8">
               {Number(data?.lowStockCount) > 0 && (
-                <motion.div initial={{ x: -10 }} animate={{ x: 0 }} className="flex items-start gap-8 p-8 border-l-4 border-accent bg-accent-soft/30">
+                <motion.div initial={{ x: -10 }} animate={{ x: 0 }} className="flex items-start gap-8 p-8 border border-accent/20 bg-accent-soft/30">
                   <AlertTriangle size={24} className="text-accent shrink-0" />
                   <div>
                     <h4 className="text-[12px] font-bold uppercase tracking-widest text-accent">Low Stock</h4>
@@ -266,7 +266,7 @@ export default function Dashboard() {
                 </motion.div>
               )}
               {Number(data?.totalOutstandingCredit) > 0 && (
-                <motion.div initial={{ x: -10 }} animate={{ x: 0 }} transition={{ delay: 0.1 }} className="flex items-start gap-8 p-8 border-l-4 border-primary bg-surface">
+                <motion.div initial={{ x: -10 }} animate={{ x: 0 }} transition={{ delay: 0.1 }} className="flex items-start gap-8 p-8 border border-border bg-surface">
                   <CreditCard size={24} className="text-primary shrink-0" />
                   <div>
                     <h4 className="text-[12px] font-bold uppercase tracking-widest">Outstanding Credit</h4>
@@ -306,15 +306,15 @@ function KpiCard({ title, value, icon: Icon, alert }: KpiCardProps) {
   return (
     <motion.div 
       variants={item}
-      whileHover={{ backgroundColor: 'hsl(0, 0%, 96%)' }}
-      className="p-8 group cursor-default h-48 flex flex-col justify-between"
+      whileHover={{ scale: 1.02 }}
+      className="tag-card p-8 group cursor-default h-48 flex flex-col justify-between"
     >
       <div className="flex justify-between items-start">
         <p className="text-[10px] font-bold text-muted uppercase tracking-[0.4em] group-hover:text-accent transition-colors duration-500">{title}</p>
         <Icon size={18} className={alert ? 'text-accent' : 'text-primary'} strokeWidth={1.5} />
       </div>
       <div>
-        <h3 className="text-3xl font-serif font-bold italic tracking-tighter leading-none">{value}</h3>
+        <h3 className="text-3xl font-sans font-black tracking-tighter leading-none">{value}</h3>
         <div className="h-0.5 w-0 group-hover:w-full bg-accent transition-all duration-700 mt-4" />
       </div>
     </motion.div>

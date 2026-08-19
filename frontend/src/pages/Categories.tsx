@@ -6,9 +6,11 @@ import LoadingOverlay from '../components/LoadingOverlay';
 import FullPageLoader from '../components/FullPageLoader';
 import AnimatedPage from '../components/AnimatedPage';
 import { motion } from 'framer-motion';
+import { useDialogStore } from '../store/dialogStore';
 
 
 export default function Categories() {
+  const { showAlert, showConfirm } = useDialogStore();
   const { data: categories, isLoading } = useCategories();
   const createCategory = useCreateCategory();
   const updateCategory = useUpdateCategory();
@@ -52,11 +54,12 @@ export default function Categories() {
   };
 
   const handleDelete = async (id: string, categoryName: string) => {
-    if (window.confirm(`Delete category "${categoryName}"? Products using it will become uncategorized.`)) {
+    const confirmed = await showConfirm(`Delete category "${categoryName}"? Products using it will become uncategorized.`);
+    if (confirmed) {
       try {
         await deleteCategory.mutateAsync(id);
       } catch {
-        alert('Cannot delete: this category still has products assigned. Remove or reassign them first.');
+        await showAlert('Cannot delete: this category still has products assigned. Remove or reassign them first.');
       }
     }
   };
@@ -81,19 +84,19 @@ export default function Categories() {
   };
 
   return (
-    <AnimatedPage className="p-6 lg:p-20 max-w-[1400px] mx-auto space-y-16 bg-white">
+    <AnimatedPage className="p-6 lg:p-12 max-w-[1400px] mx-auto space-y-16 bg-background">
       {isMutating && <LoadingOverlay message={deleteCategory.isPending ? 'Deleting...' : editingId ? 'Updating...' : 'Creating...'} />}
       
       {/* Header */}
-      <div className="border-b border-black pb-12 flex flex-col md:flex-row md:items-end justify-between gap-8">
+      <div className="border-b border-border pb-12 flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div>
-          <h1 className="text-4xl lg:text-7xl font-serif font-bold tracking-tighter uppercase leading-none italic">Categories</h1>
-          <p className="text-[10px] text-muted mt-6 uppercase tracking-[0.5em] font-bold opacity-60 italic">Manage Product Categories</p>
+          <h1 className="text-4xl lg:text-5xl font-sans font-black tracking-tighter uppercase leading-none">Categories</h1>
+          <p className="text-[10px] text-muted mt-6 uppercase tracking-[0.5em] font-bold opacity-60">Manage Product Categories</p>
         </div>
         <div className="flex items-center gap-10">
            <div className="text-right">
               <p className="text-[9px] text-muted uppercase tracking-[0.3em] font-bold opacity-60">Total Categories</p>
-              <p className="font-serif text-3xl font-bold italic leading-none mt-2">{categories?.length ?? 0}</p>
+              <p className="font-sans text-3xl font-black leading-none mt-2">{categories?.length ?? 0}</p>
            </div>
         </div>
       </div>
@@ -102,11 +105,11 @@ export default function Categories() {
         {/* Create Form */}
         <div className="xl:col-span-4 space-y-10">
            <div className="space-y-4">
-              <h2 className="text-xl font-serif font-bold italic uppercase tracking-tighter">Add New Category</h2>
+              <h2 className="text-xl font-sans font-black uppercase tracking-tighter">Add New Category</h2>
               <p className="text-[9px] text-muted uppercase tracking-[0.3em] font-bold opacity-40">Create a new category for classification</p>
            </div>
 
-           <form onSubmit={handleCreate} className="space-y-8 p-10 border border-black bg-surface/30">
+           <form onSubmit={handleCreate} className="space-y-8 p-10 border border-border bg-surface/30 rounded-2xl shadow-sm">
               <div className="space-y-3">
                  <label className="text-[9px] font-bold text-muted uppercase tracking-[0.3em]">Category Name *</label>
                  <input
@@ -125,13 +128,13 @@ export default function Categories() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={4}
-                    className="w-full bg-white border border-border px-6 py-5 text-xs uppercase tracking-[0.1em] focus:border-black focus:outline-none transition-all placeholder:opacity-20"
+                    className="w-full bg-white border border-border rounded-xl px-6 py-5 text-xs uppercase tracking-[0.1em] focus:border-accent focus:outline-none transition-all placeholder:opacity-20"
                   />
               </div>
               <button
                 type="submit"
                 disabled={createCategory.isPending}
-                className="craft-btn w-full flex items-center justify-center gap-4"
+                className="tag-btn w-full flex items-center justify-center gap-4 cursor-pointer"
               >
                 <Plus size={16} />
                 Save Category
@@ -142,13 +145,13 @@ export default function Categories() {
         {/* List */}
         <div className="xl:col-span-8 space-y-10">
            <div className="space-y-4">
-              <h2 className="text-xl font-serif font-bold italic uppercase tracking-tighter">All Categories</h2>
+              <h2 className="text-xl font-sans font-black uppercase tracking-tighter">All Categories</h2>
               <p className="text-[9px] text-muted uppercase tracking-[0.3em] font-bold opacity-40">List of all product categories</p>
            </div>
 
-           <div className="craft-card overflow-hidden">
+           <div className="tag-card overflow-hidden">
             <table className="w-full text-left">
-              <thead className="bg-black text-white text-[9px] uppercase tracking-[0.4em] font-bold">
+              <thead className="bg-surface text-primary border-b border-border text-[9px] uppercase tracking-[0.4em] font-bold">
                 <tr>
                   <th className="px-10 py-6">Category Name</th>
                   <th className="px-10 py-6">Description</th>
