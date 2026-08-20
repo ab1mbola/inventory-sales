@@ -45,7 +45,7 @@ export default function Sales() {
   };
 
   return (
-    <AnimatedPage className="p-4 lg:p-12 max-w-[1600px] mx-auto space-y-12 bg-white font-sans">
+    <AnimatedPage className="p-4 lg:p-12 max-w-[1600px] mx-auto space-y-12 bg-background font-sans">
       <AnimatePresence>
         {selectedSale && (
           <ReceiptModal 
@@ -55,26 +55,26 @@ export default function Sales() {
         )}
       </AnimatePresence>
 
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10 border-b border-black pb-12">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10 border-b border-border pb-12">
         <div>
-          <h1 className="text-4xl lg:text-6xl font-serif font-bold tracking-tighter uppercase leading-none italic">Sales</h1>
-          <p className="text-[10px] text-muted mt-6 uppercase tracking-[0.5em] font-bold opacity-60 italic">Manage Sales & Transactions</p>
+          <h1 className="text-3xl lg:text-4xl font-sans font-black tracking-tighter uppercase leading-none">Sales</h1>
+          <p className="text-[10px] text-muted mt-6 uppercase tracking-[0.5em] font-bold opacity-60 ">Manage Sales & Transactions</p>
         </div>
         <div className="flex items-center gap-10">
            <div className="text-right">
               <p className="text-[9px] text-muted uppercase tracking-[0.3em] font-bold opacity-60">Total Sales</p>
-              <p className="font-serif text-3xl font-bold italic leading-none mt-2">{filteredSales?.length || 0}</p>
+              <p className="font-sans text-3xl font-black leading-none mt-2">{filteredSales?.length || 0}</p>
            </div>
-           <div className="h-14 w-px bg-black opacity-10" />
+           <div className="h-14 w-px bg-border opacity-10" />
            <div className="text-right">
               <p className="text-[9px] text-muted uppercase tracking-[0.3em] font-bold opacity-60">System Status</p>
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] mt-2 italic text-accent">Online</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] mt-2 text-accent">Online</p>
            </div>
         </div>
       </div>
 
       {/* Search Bar */}
-      <div className="relative group border-b border-black/5">
+      <div className="relative group border-b border-border/5">
         <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-accent transition-colors" size={18} strokeWidth={1} />
         <input
           type="text"
@@ -90,7 +90,7 @@ export default function Sales() {
         <div className="overflow-x-auto no-scrollbar">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-surface/50 border-b border-black text-left">
+              <tr className="bg-surface/50 border-b border-border text-left">
                 <th className="px-8 py-6 text-[9px] font-bold text-muted uppercase tracking-[0.4em]">Date & Time</th>
                 <th className="px-8 py-6 text-[9px] font-bold text-muted uppercase tracking-[0.4em]">Sale ID</th>
                 <th className="px-8 py-6 text-[9px] font-bold text-muted uppercase tracking-[0.4em]">Customer</th>
@@ -116,12 +116,12 @@ export default function Sales() {
                   </td>
                   <td className="px-8 py-8 whitespace-nowrap">
                     <div className="text-sm font-bold uppercase tracking-widest text-primary group-hover:text-accent transition-colors duration-500">{sale.customerName || 'Walk-in Customer'}</div>
-                    <div className="text-[9px] text-muted font-bold uppercase tracking-[0.3em] mt-2 italic opacity-40">{sale.paymentMethod}</div>
+                    <div className="text-[9px] text-muted font-bold uppercase tracking-[0.3em] mt-2 opacity-40">{sale.paymentMethod}</div>
                   </td>
                   <td className="px-8 py-8 whitespace-nowrap text-right text-[11px] font-bold text-muted opacity-60">
                     {sale.items?.reduce((acc, item) => acc + item.quantity, 0) || 0} ITEMS
                   </td>
-                  <td className="px-8 py-8 whitespace-nowrap text-right text-xl font-serif font-bold italic text-primary tracking-tighter">
+                  <td className="px-8 py-8 whitespace-nowrap text-right font-sans font-black text-lg text-primary tracking-tighter">
                     ₦{Number(sale.totalAmount).toLocaleString()}
                   </td>
                   <td className="px-8 py-8 whitespace-nowrap text-center">
@@ -159,7 +159,7 @@ export default function Sales() {
                   <td colSpan={7} className="px-8 py-32 text-center">
                     <div className="flex flex-col items-center gap-6 opacity-20">
                       <FileText size={48} strokeWidth={0.5} />
-                      <p className="text-[10px] uppercase tracking-[0.6em] font-bold italic">No sales found</p>
+                      <p className="text-[10px] uppercase tracking-[0.6em] font-bold ">No sales found</p>
                     </div>
                   </td>
                 </motion.tr>
@@ -171,5 +171,7 @@ export default function Sales() {
     </AnimatedPage>
   );
 }
+
+
 
 

@@ -245,7 +245,7 @@ export default function POS() {
                         setIsCustomerDropdownOpen(true);
                       }}
                       className={`craft-card p-12 flex flex-col items-center gap-8 group transition-all ${
-                        selectedCustomer && !isAddingNewCustomer ? 'border-primary bg-primary/5' : 'hover:border-black'
+                        selectedCustomer && !isAddingNewCustomer ? 'border-primary bg-primary/5' : 'hover:border-accent'
                       }`}
                     >
                       <Search size={40} strokeWidth={1} className="text-muted group-hover:text-primary transition-colors" />
@@ -264,7 +264,7 @@ export default function POS() {
                         setSelectedCustomer(null);
                       }}
                       className={`craft-card p-12 flex flex-col items-center gap-8 group transition-all ${
-                        isAddingNewCustomer ? 'border-primary bg-primary/5' : 'hover:border-black'
+                        isAddingNewCustomer ? 'border-primary bg-primary/5' : 'hover:border-accent'
                       }`}
                     >
                       <UserPlus size={40} strokeWidth={1} className="text-muted group-hover:text-primary transition-colors" />
@@ -327,10 +327,10 @@ export default function POS() {
                           placeholder="Search by name or phone..."
                           value={customerSearch}
                           onChange={(e) => setCustomerSearch(e.target.value)}
-                          className="w-full h-16 px-10 bg-white border border-black text-[11px] uppercase tracking-[0.3em] focus:border-accent focus:outline-none placeholder:opacity-20"
+                          className="w-full h-16 px-10 bg-white border border-border rounded-xl text-[11px] uppercase tracking-[0.3em] focus:border-accent focus:outline-none placeholder:opacity-20"
                         />
                         {customerSearch && (
-                          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-black shadow-[30px_30px_0px_0px_rgba(0,0,0,0.05)] z-50 max-h-[400px] overflow-y-auto no-scrollbar">
+                          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-border rounded-xl shadow-[30px_30px_0px_0px_rgba(0,0,0,0.05)] z-50 max-h-[400px] overflow-y-auto no-scrollbar">
                             {filteredCustomers?.length === 0 ? (
                               <div className="p-16 text-center text-[10px] uppercase tracking-[0.5em] text-muted italic opacity-40">No customers found</div>
                             ) : (
@@ -381,8 +381,8 @@ export default function POS() {
                 className="flex-1 flex flex-col lg:flex-row h-full overflow-hidden"
               >
                 {/* Product Grid Container */}
-                <div className="flex-1 flex flex-col min-w-0 border-r border-black/5">
-                  <div className="p-10 bg-white/50 border-b border-black/5 space-y-8">
+                <div className="flex-1 flex flex-col min-w-0 border-r border-border/5">
+                  <div className="p-10 bg-white/50 border-b border-border/5 space-y-8">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                       <div className="relative group flex-1 max-w-2xl">
                         <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-accent transition-colors" size={20} strokeWidth={1} />
@@ -675,5 +675,7 @@ export default function POS() {
     </AnimatedPage>
   );
 }
+
+
 
 

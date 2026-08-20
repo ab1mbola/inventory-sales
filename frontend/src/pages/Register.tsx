@@ -80,7 +80,7 @@ export default function Register() {
           <div className="flex items-center gap-4 mb-10 group">
             <motion.div 
               whileHover={{ scale: 1.1, backgroundColor: "var(--color-primary)" }}
-              className="w-14 h-14 border-2 border-black rounded-2xl flex items-center justify-center bg-black transition-all duration-500"
+              className="w-14 h-14 border-2 border-primary rounded-2xl flex items-center justify-center bg-black transition-all duration-500"
             >
                <Package size={28} className="text-white" />
             </motion.div>
@@ -207,3 +207,4 @@ export default function Register() {
     </AnimatedPage>
   );
 }
+

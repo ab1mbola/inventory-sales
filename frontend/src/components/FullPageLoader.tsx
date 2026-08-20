@@ -25,7 +25,7 @@ export default function FullPageLoader({ message = 'Initializing Terminal...' }:
           initial={{ scale: 0.8, opacity: 0.5 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
-          className="font-serif text-2xl font-bold italic"
+          className="font-sans text-2xl font-black"
         >
           M
         </motion.div>
@@ -54,4 +54,5 @@ export default function FullPageLoader({ message = 'Initializing Terminal...' }:
     </div>
   );
 }
+
 
