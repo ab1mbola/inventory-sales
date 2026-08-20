@@ -291,7 +291,7 @@ export default function Settings() {
                     <button 
                       type="submit"
                       disabled={updatePassword.isPending}
-                      className="px-6 py-3 bg-white border border-black text-black hover:bg-black hover:text-white transition-all text-[10px] font-bold uppercase tracking-widest flex items-center gap-3 disabled:opacity-30"
+                      className="px-6 py-3 bg-white border border-primary text-black hover:bg-black hover:text-white transition-all text-[10px] font-bold uppercase tracking-widest flex items-center gap-3 disabled:opacity-30"
                     >
                       {updatePassword.isPending ? <Loader2 size={16} className="animate-spin" /> : <Lock size={14} />}
                       Update Password
@@ -391,3 +391,4 @@ export default function Settings() {
     </div>
   );
 }
+

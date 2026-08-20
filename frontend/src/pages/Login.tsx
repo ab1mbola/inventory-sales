@@ -74,7 +74,7 @@ export default function Login() {
           <div className="flex items-center gap-4 mb-10 group cursor-default">
             <motion.div 
               whileHover={{ rotate: 90, backgroundColor: "var(--color-accent)", borderColor: "var(--color-accent)" }}
-              className="w-14 h-14 border-2 border-black rounded-2xl flex items-center justify-center transition-all duration-700"
+              className="w-14 h-14 border-2 border-primary rounded-2xl flex items-center justify-center transition-all duration-700"
             >
                <Package size={28} className="text-black group-hover:text-white transition-colors" />
             </motion.div>
@@ -170,5 +170,6 @@ export default function Login() {
     </AnimatedPage>
   );
 }
+
 
 

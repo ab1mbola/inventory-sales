@@ -18,12 +18,12 @@ export default function ReceiptModal({ sale, onClose }: Props) {
       onClick={onClose}
     >
       <div 
-        className="bg-white text-primary w-full max-w-md shadow-[20px_20px_0px_0px_rgba(0,0,0,0.1)] border border-black overflow-hidden flex flex-col max-h-[90vh] my-auto animate-in zoom-in-95 duration-500"
+        className="bg-white text-primary w-full max-w-md shadow-[20px_20px_0px_0px_rgba(0,0,0,0.1)] border border-border rounded-3xl shadow-3xl overflow-hidden flex flex-col max-h-[90vh] my-auto animate-in zoom-in-95 duration-500"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header (Hidden on print) */}
-        <div className="p-8 bg-surface flex items-center justify-between border-b border-black print:hidden">
-          <h3 className="text-[10px] font-bold uppercase tracking-[0.4em] italic">Receipt Preview</h3>
+        <div className="p-8 bg-surface flex items-center justify-between border-b border-border print:hidden">
+          <h3 className="text-[10px] font-bold uppercase tracking-[0.4em] ">Receipt Preview</h3>
           <div className="flex items-center gap-6">
             <button 
               onClick={handlePrint}
@@ -44,15 +44,15 @@ export default function ReceiptModal({ sale, onClose }: Props) {
         {/* Receipt Content */}
         <div className="p-10 flex-1 overflow-y-auto print:p-0 print:overflow-visible no-scrollbar bg-white" id="receipt-content">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-serif font-bold tracking-tighter uppercase italic leading-none">Mnemos</h1>
+            <h1 className="text-4xl font-sans font-bold tracking-tighter uppercase  leading-none">Mnemos</h1>
             <p className="text-[9px] font-bold text-muted uppercase tracking-[0.4em] mt-4">Sales Management System</p>
             <div className="mt-8 flex flex-col items-center gap-2">
-              <p className="text-[9px] font-bold text-primary uppercase tracking-[0.2em] border border-black px-4 py-1">REF: {sale.id.slice(0, 8).toUpperCase()}</p>
+              <p className="text-[9px] font-bold text-primary uppercase tracking-[0.2em] border border-border rounded-3xl shadow-3xl px-4 py-1">REF: {sale.id.slice(0, 8).toUpperCase()}</p>
               <p className="text-[9px] font-bold text-muted mt-2 uppercase tracking-widest">{format(new Date(sale.createdAt), 'MMM dd, yyyy • HH:mm')}</p>
             </div>
           </div>
 
-          <div className="border-t border-b border-black py-8 mb-10">
+          <div className="border-t border-b border-border py-8 mb-10">
             <table className="w-full text-xs">
               <thead>
                 <tr className="text-left text-muted border-b border-border">
@@ -66,10 +66,10 @@ export default function ReceiptModal({ sale, onClose }: Props) {
                   <tr key={item.id} className="group">
                     <td className="py-6 pr-4">
                       <div className="font-bold text-primary text-[11px] uppercase tracking-tight">{item.product?.name || 'GENERIC ITEM'}</div>
-                      <div className="text-[9px] text-muted font-bold uppercase tracking-[0.1em] mt-2 italic">{item.product?.sku}</div>
+                      <div className="text-[9px] text-muted font-bold uppercase tracking-[0.1em] mt-2 ">{item.product?.sku}</div>
                     </td>
                     <td className="py-6 text-center text-primary font-bold">{item.quantity}</td>
-                    <td className="py-6 text-right font-serif font-bold italic text-primary text-sm">₦{(item.price * item.quantity).toLocaleString()}</td>
+                    <td className="py-6 text-right font-sans font-bold  text-primary text-sm">₦{(item.price * item.quantity).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -85,9 +85,9 @@ export default function ReceiptModal({ sale, onClose }: Props) {
               <span className="text-muted uppercase tracking-[0.2em]">Tax (0%)</span>
               <span className="text-primary">₦0</span>
             </div>
-            <div className="flex justify-between border-t-2 border-black pt-6 mt-6">
+            <div className="flex justify-between border-t-2 border-border pt-6 mt-6">
               <span className="text-[11px] font-bold uppercase tracking-[0.4em]">Total</span>
-              <span className="text-2xl font-serif font-bold italic text-accent leading-none">₦{Number(sale.totalAmount).toLocaleString()}</span>
+              <span className="text-2xl font-sans font-bold  text-accent leading-none">₦{Number(sale.totalAmount).toLocaleString()}</span>
             </div>
           </div>
 
@@ -110,7 +110,7 @@ export default function ReceiptModal({ sale, onClose }: Props) {
             )}
             {(sale.paymentMethod === 'CREDIT' || sale.customerName) && (
               <div className="border-t border-border pt-6 mt-6">
-                <p className="text-[9px] uppercase font-bold text-muted tracking-[0.3em] mb-3 italic">Customer Info</p>
+                <p className="text-[9px] uppercase font-bold text-muted tracking-[0.3em] mb-3 ">Customer Info</p>
                 <p className="text-xs font-bold text-primary uppercase tracking-tight">{sale.customerName || 'UNKNOWN'}</p>
                 {sale.customerPhone && <p className="text-[10px] font-bold text-muted mt-2 tracking-widest">{sale.customerPhone}</p>}
               </div>
@@ -118,17 +118,17 @@ export default function ReceiptModal({ sale, onClose }: Props) {
           </div>
 
           <div className="text-center space-y-6">
-            <p className="text-[9px] font-bold text-muted uppercase tracking-[0.3em] italic">Thank you for your business!</p>
+            <p className="text-[9px] font-bold text-muted uppercase tracking-[0.3em] ">Thank you for your business!</p>
             <div className="h-px bg-border w-12 mx-auto" />
             <p className="text-[8px] font-bold text-muted/30 uppercase tracking-[0.5em]">Generated by Mnemos System</p>
           </div>
         </div>
 
         {/* Footer (Hidden on print) */}
-        <div className="p-10 bg-surface border-t border-black print:hidden">
+        <div className="p-10 bg-surface border-t border-border print:hidden">
           <button 
             onClick={onClose}
-            className="w-full h-16 craft-btn text-[10px] cursor-pointer"
+            className="w-full h-16 tag-btn rounded-full text-[10px] cursor-pointer"
           >
             CLOSE & CONTINUE
           </button>
@@ -157,3 +157,4 @@ export default function ReceiptModal({ sale, onClose }: Props) {
     </div>
   );
 }
+
