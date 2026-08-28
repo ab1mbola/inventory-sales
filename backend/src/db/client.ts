@@ -1,19 +1,21 @@
 import { PrismaClient } from '@prisma/client';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
+import {
+  getDatabaseConnectionString,
+  getDatabaseEnvironment,
+} from '../config/databaseEnvironment';
 
 // Bypasses SSL certificate validation errors
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-const connectionString = 
-  process.env.DATABASE_URL || 
-  (process.env.DB_ENV === 'prod' ? process.env.DATABASE_URL_PROD : process.env.DATABASE_URL_DEV) ||
-  process.env.DATABASE_URL_PROD ||
-  process.env.DATABASE_URL_DEV;
+const databaseEnvironment = getDatabaseEnvironment();
+const connectionString = getDatabaseConnectionString();
 
 if (!connectionString) {
-  console.error('CRITICAL ERROR: No database connection string found.');
-  console.error('Expected one of: DATABASE_URL, DATABASE_URL_PROD, or DATABASE_URL_DEV');
+  const expectedVariable = databaseEnvironment === 'prod' ? 'DATABASE_URL_PROD' : 'DATABASE_URL_DEV';
+  console.error(`CRITICAL ERROR: No ${databaseEnvironment} database connection string found.`);
+  console.error(`Expected ${expectedVariable} for this deployment environment.`);
   // We don't process.exit(1) here to allow the server to start (for health checks)
   // but subsequent DB calls will fail with a clear error.
 }

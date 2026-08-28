@@ -15,6 +15,8 @@ jobs:
           PRODUCTION_APP_URL: ${{ secrets.PRODUCTION_APP_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
+          set -euo pipefail
+
           if [ -z "$PRODUCTION_APP_URL" ]; then
             echo "❌ ERROR: PRODUCTION_APP_URL secret is not defined in GitHub Secrets."
             exit 1
@@ -32,21 +34,30 @@ jobs:
           echo "Sending keep-alive ping request to the backend..."
           
           # Call the /api/cron/keep-alive endpoint
-          RESPONSE=$(curl -s -w "%{http_code}" -X GET \
+          RESPONSE=$(curl -sS --retry 2 --retry-delay 2 --connect-timeout 10 --max-time 45 \
+            -w $'\n%{http_code}' -X GET \
+            -H "Accept: application/json" \
             -H "Authorization: Bearer $CRON_SECRET" \
             "$BASE_URL/_/backend/api/cron/keep-alive")
           
-          HTTP_STATUS="${RESPONSE:${#RESPONSE}-3}"
-          BODY="${RESPONSE:0:${#RESPONSE}-3}"
+          HTTP_STATUS="${RESPONSE##*$'\n'}"
+          BODY="${RESPONSE%$'\n'*}"
           
           echo "=============================================="
           echo "HTTP Status Code: $HTTP_STATUS"
           echo "Response Body: $BODY"
           echo "=============================================="
           
-          if [ "$HTTP_STATUS" -eq 200 ] || [ "$HTTP_STATUS" -eq 207 ]; then
-            echo "✅ Database keep-alive ping completed successfully!"
-          else
+          if [ "$HTTP_STATUS" != "200" ]; then
             echo "❌ Database keep-alive ping failed with HTTP Status: $HTTP_STATUS"
             exit 1
           fi
+
+          if ! printf '%s' "$BODY" | jq -e \
+            '.success == true and .results.development.success == true and .results.production.success == true' \
+            >/dev/null; then
+            echo "❌ Response did not confirm successful pings for both databases."
+            exit 1
+          fi
+
+          echo "✅ Both development and production database keep-alive pings completed successfully!"
