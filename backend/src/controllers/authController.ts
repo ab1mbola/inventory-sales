@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { internal_unscoped_prisma as prisma } from '../db/client';
+import { internal_unscoped_prisma as prisma } from '../db/client.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { AuthenticatedRequest } from '../middleware/authMiddleware';
+import { AuthenticatedRequest } from '../middleware/authMiddleware.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-change-me';
 

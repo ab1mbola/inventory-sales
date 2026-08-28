@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/authMiddleware';
+import { AuthenticatedRequest } from '../middleware/authMiddleware.js';
 
 export const getCategories = async (req: AuthenticatedRequest, res: Response) => {
   try {

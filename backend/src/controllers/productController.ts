@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/authMiddleware';
-import { ProductService } from '../services/product.service';
+import { AuthenticatedRequest } from '../middleware/authMiddleware.js';
+import { ProductService } from '../services/product.service.js';
 
 export const getProducts = async (req: AuthenticatedRequest, res: Response) => {
   try {

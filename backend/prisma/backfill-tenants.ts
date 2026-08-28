@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import 'dotenv/config';
-import { internal_unscoped_prisma as prisma } from '../src/db/client';
+import { internal_unscoped_prisma as prisma } from '../src/db/client.js';
 
 // 1. EXECUTION MODES
 const IS_EXECUTE = process.argv.includes('--execute');

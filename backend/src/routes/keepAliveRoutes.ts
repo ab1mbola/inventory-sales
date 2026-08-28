@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { triggerKeepAlive } from '../controllers/keepAliveController';
+import { triggerKeepAlive } from '../controllers/keepAliveController.js';
 
 const router = Router();
 

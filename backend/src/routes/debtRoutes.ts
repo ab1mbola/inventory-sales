@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { getDebtors, getCustomerDebtDetails, recordPayment } from '../controllers/debtController';
-import { authenticate } from '../middleware/authMiddleware';
+import { getDebtors, getCustomerDebtDetails, recordPayment } from '../controllers/debtController.js';
+import { authenticate } from '../middleware/authMiddleware.js';
 
 const router = Router();
 

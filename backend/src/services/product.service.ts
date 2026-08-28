@@ -1,4 +1,4 @@
-import { ScopedDB } from '../db/tenantFactory';
+import { ScopedDB } from '../db/tenantFactory.js';
 
 export class ProductService {
   constructor(private db: ScopedDB) {}

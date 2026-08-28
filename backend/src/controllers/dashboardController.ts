@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { startOfDay, endOfDay, subDays } from 'date-fns';
-import { AuthenticatedRequest } from '../middleware/authMiddleware';
+import { AuthenticatedRequest } from '../middleware/authMiddleware.js';
 
 export const getDashboardStats = async (req: AuthenticatedRequest, res: Response) => {
   try {

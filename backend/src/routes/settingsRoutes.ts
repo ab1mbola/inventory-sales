@@ -4,8 +4,8 @@ import {
   changePassword, 
   getCompanySettings, 
   updateCompanySettings 
-} from '../controllers/settingsController';
-import { authenticate, authorize } from '../middleware/authMiddleware';
+} from '../controllers/settingsController.js';
+import { authenticate, authorize } from '../middleware/authMiddleware.js';
 
 const router = Router();
 

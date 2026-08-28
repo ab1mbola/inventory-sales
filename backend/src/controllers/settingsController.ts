@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { internal_unscoped_prisma as prisma } from '../db/client';
+import { internal_unscoped_prisma as prisma } from '../db/client.js';
 import bcrypt from 'bcryptjs';
-import { AuthenticatedRequest } from '../middleware/authMiddleware';
+import { AuthenticatedRequest } from '../middleware/authMiddleware.js';
 
 // Profile Settings
 export const updateProfile = async (req: AuthenticatedRequest, res: Response) => {

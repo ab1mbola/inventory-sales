@@ -1,10 +1,10 @@
 import { execSync } from 'child_process';
 import dotenv from 'dotenv';
-import path from 'path';
-import { getDatabaseEnvironment } from '../config/databaseEnvironment';
+import { fileURLToPath } from 'url';
+import { getDatabaseEnvironment } from '../config/databaseEnvironment.js';
 
 // Load environment variables securely
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: fileURLToPath(new URL('../../.env', import.meta.url)) });
 
 async function main() {
   const isProd = getDatabaseEnvironment() === 'prod';

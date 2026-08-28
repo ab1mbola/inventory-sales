@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { startOfMonth, subMonths, format } from 'date-fns';
-import { AuthenticatedRequest } from '../middleware/authMiddleware';
+import { AuthenticatedRequest } from '../middleware/authMiddleware.js';
 
 export const getReportStats = async (req: AuthenticatedRequest, res: Response) => {
   try {

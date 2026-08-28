@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { internal_unscoped_prisma as prisma } from '../db/client';
-import { createTenantDB, ScopedDB } from '../db/tenantFactory';
+import { internal_unscoped_prisma as prisma } from '../db/client.js';
+import { createTenantDB, ScopedDB } from '../db/tenantFactory.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-change-me';
 

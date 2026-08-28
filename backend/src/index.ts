@@ -1,9 +1,8 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
-dotenv.config();
 
-import { internal_unscoped_prisma as prisma } from './db/client';
+import { internal_unscoped_prisma as prisma } from './db/client.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -24,16 +23,16 @@ app.get("/", (req, res) => {
   res.json({ message: "API is working" });
 });
 
-import productRoutes from './routes/productRoutes';
-import saleRoutes from './routes/saleRoutes';
-import categoryRoutes from './routes/categoryRoutes';
-import dashboardRoutes from './routes/dashboardRoutes';
-import reportRoutes from './routes/reportRoutes';
-import authRoutes from './routes/authRoutes';
-import customerRoutes from './routes/customerRoutes';
-import debtRoutes from './routes/debtRoutes';
-import settingsRoutes from './routes/settingsRoutes';
-import keepAliveRoutes from './routes/keepAliveRoutes';
+import productRoutes from './routes/productRoutes.js';
+import saleRoutes from './routes/saleRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
+import reportRoutes from './routes/reportRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import customerRoutes from './routes/customerRoutes.js';
+import debtRoutes from './routes/debtRoutes.js';
+import settingsRoutes from './routes/settingsRoutes.js';
+import keepAliveRoutes from './routes/keepAliveRoutes.js';
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -64,5 +63,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 app.listen(Number(port), '0.0.0.0', () => {
   console.log(`Server is running on port ${port} (Network Accessible)`);
 });
+
+export default app;
 
 // Last update: 04/27/2026 22:14:19

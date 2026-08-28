@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
-import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Load environment variables from backend/.env securely
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: fileURLToPath(new URL('../../.env', import.meta.url)) });
 
-import { pingAllDatabases } from '../services/keepAliveService';
+import { pingAllDatabases } from '../services/keepAliveService.js';
 
 async function run() {
   console.log('====================================================');

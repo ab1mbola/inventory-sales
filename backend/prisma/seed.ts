@@ -1,4 +1,4 @@
-import { internal_unscoped_prisma as prisma } from '../src/db/client';
+import { internal_unscoped_prisma as prisma } from '../src/db/client.js';
 import * as bcrypt from 'bcryptjs';
 
 async function main() {

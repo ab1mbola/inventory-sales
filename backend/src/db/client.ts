@@ -4,7 +4,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import {
   getDatabaseConnectionString,
   getDatabaseEnvironment,
-} from '../config/databaseEnvironment';
+} from '../config/databaseEnvironment.js';
 
 // Bypasses SSL certificate validation errors
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';

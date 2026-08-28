@@ -1,4 +1,4 @@
-import { internal_unscoped_prisma } from './client';
+import { internal_unscoped_prisma } from './client.js';
 
 /**
  * Creates a tenant-scoped Prisma client.

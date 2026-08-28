@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { pingAllDatabases } from '../services/keepAliveService';
+import { pingAllDatabases } from '../services/keepAliveService.js';
 
 export async function triggerKeepAlive(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
