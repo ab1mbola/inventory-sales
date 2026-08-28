@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node --env-file=.env --loader ts-node/esm src/index.ts",
     "clean": "node --input-type=module -e \"import { rmSync } from 'node:fs'; rmSync('dist', { recursive: true, force: true });\"",
-    "build": "npm run clean && prisma generate && node --loader ts-node/esm src/scripts/deploy-migrations.ts && tsc",
+    "build": "npm run clean && prisma generate && node --loader ts-node/esm src/scripts/deploy-migrations.ts && tsc && npm run bundle",
+    "bundle": "node scripts/bundle.mjs",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "prisma db seed",
     "start": "node --env-file=.env dist/index.js",
@@ -38,6 +39,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.6.0",
     "@types/pg": "^8.20.0",
+    "esbuild": "^0.28.2",
     "prisma": "^7.8.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
